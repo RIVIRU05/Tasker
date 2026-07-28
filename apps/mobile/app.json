@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "Tasker",
+    "slug": "tasker",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "lk.tasker.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-asset",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Tasker uses your photos to attach proof of completed work."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "dd19c1bd-9dca-492f-8e9b-39101f201a2d"
+      }
+    }
+  }
+}
