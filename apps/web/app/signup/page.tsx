@@ -91,7 +91,7 @@ export default function SignupPage() {
               placeholder="you@example.com"
               value={form.email}
               onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-              hint={isStudentEmail ? "Student email detected — you'll get student pricing automatically." : "Use a .ac.lk email to unlock student pricing."}
+              hint={isStudentEmail ? "Student email detected, you'll get student pricing automatically." : "Use a .ac.lk email to unlock student pricing."}
             />
             <Input
               id="phone"

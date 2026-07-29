@@ -40,7 +40,7 @@ export function RatingForm({
     onSubmitted?.();
   }
 
-  if (done) return <Text style={styles.done}>Thanks for the feedback — your review is posted.</Text>;
+  if (done) return <Text style={styles.done}>Thanks for the feedback, your review is posted.</Text>;
 
   return (
     <View style={{ gap: spacing.md }}>

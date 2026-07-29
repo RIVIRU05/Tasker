@@ -108,7 +108,7 @@ export function DashboardScreen({ navigation }: any) {
           </View>
           {assignedJobs.length === 0 && (
             <Card variant="soft">
-              <Text style={styles.body}>No active jobs yet — browse open tasks to bid.</Text>
+              <Text style={styles.body}>No active jobs yet. Browse open tasks to bid.</Text>
             </Card>
           )}
           {assignedJobs.map((task) => (

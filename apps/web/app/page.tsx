@@ -49,8 +49,8 @@ export default function HomePage() {
               Get it done by trusted local pros
             </h1>
             <p className="text-body-lg text-body mt-lg max-w-md">
-              Post any task — plumbing, electrical, painting, moving and more — get bids from
-              verified workers in Colombo and Kandy within minutes.
+              Post any task, from plumbing and electrical to painting and moving, and get bids
+              from verified workers in Colombo and Kandy within minutes.
             </p>
             <div className="flex flex-wrap items-center gap-md mt-2xl">
               <Button href="/tasks/new" variant="primary" size="lg">
@@ -101,7 +101,7 @@ export default function HomePage() {
               </div>
             </div>
             <Button href="/tasks/new" variant="large" className="w-full mt-lg justify-center">
-              Post a task — it&apos;s free
+              Post a task, it&apos;s free
             </Button>
           </Card>
         </div>
@@ -143,8 +143,8 @@ export default function HomePage() {
             </span>
             <h3 className="text-display-md font-display text-ink">Skilled with tools?</h3>
             <p className="text-body-md text-body mt-sm">
-              Browse open tasks near you, bid what you&apos;re worth, and get paid securely —
-              student workers keep more with a reduced 9% fee.
+              Browse open tasks near you, bid what you&apos;re worth, and get paid securely.
+              Student workers keep more with a reduced 9% fee.
             </p>
             <Link href="/signup" className="inline-flex items-center gap-xs text-body-md-strong text-ink mt-lg">
               Start earning <ChevronRight size={16} />
@@ -241,7 +241,7 @@ export default function HomePage() {
             <div>
               <h4 className="text-display-sm font-display text-ink">12% platform fee</h4>
               <p className="text-body-sm text-body mt-sm">
-                9% for verified student workers. No listing fees, no subscriptions — Tasker
+                9% for verified student workers. No listing fees, no subscriptions. Tasker
                 only earns when you do.
               </p>
             </div>

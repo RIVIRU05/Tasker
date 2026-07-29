@@ -427,7 +427,7 @@ function TaskActions({
           value={photos}
           onChange={setPhotos}
           multiple
-          hint="Show the finished work — the customer sees these before releasing payment."
+          hint="Show the finished work: the customer sees these before releasing payment."
         />
         <Button
           variant="primary"
@@ -494,7 +494,7 @@ function TaskActions({
   }
 
   if (task.status === "open" && isCustomer) {
-    return <p className="text-body-sm text-body">Waiting for bids — accept one below to get started.</p>;
+    return <p className="text-body-sm text-body">Waiting for bids, accept one below to get started.</p>;
   }
 
   return null;
@@ -546,7 +546,7 @@ function DisputeAction({
         id="dispute-description"
         label="What's wrong?"
         required
-        placeholder="Describe the issue — the more detail, the faster this gets resolved."
+        placeholder="Describe the issue: the more detail, the faster this gets resolved."
         value={description}
         onChange={(e) => setDescription(e.target.value)}
       />

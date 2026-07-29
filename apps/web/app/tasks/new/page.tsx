@@ -177,7 +177,7 @@ export default function NewTaskPage() {
                 id="description"
                 label="Description"
                 required
-                placeholder="Be specific — what needs doing, any access details, materials on hand…"
+                placeholder="Be specific: what needs doing, any access details, materials on hand…"
                 value={form.description}
                 onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
                 hint="At least 20 characters. Workers bid better with more detail."
@@ -231,7 +231,7 @@ export default function NewTaskPage() {
                 value={form.timeline}
                 onChange={(e) => setForm((f) => ({ ...f, timeline: e.target.value as TaskTimeline }))}
               >
-                <option value="urgent">Urgent — ASAP</option>
+                <option value="urgent">Urgent (ASAP)</option>
                 <option value="flexible">Flexible</option>
                 <option value="scheduled">Scheduled date</option>
               </Select>
@@ -272,7 +272,7 @@ export default function NewTaskPage() {
               </div>
               <div className="grid sm:grid-cols-2 gap-lg text-body-sm text-body">
                 <p>
-                  <span className="text-mute">Location:</span> {form.city || "—"}, {COUNTRY_LABELS[form.country]}
+                  <span className="text-mute">Location:</span> {form.city || "Not set"}, {COUNTRY_LABELS[form.country]}
                 </p>
                 <p>
                   <span className="text-mute">Timeline:</span> {form.timeline}

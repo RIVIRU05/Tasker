@@ -41,7 +41,7 @@ export function Footer() {
               <span className="text-display-sm font-display text-on-dark">Tasker</span>
             </div>
             <p className="text-body-sm text-white/60 mt-lg max-w-xs">
-              Sri Lanka&apos;s marketplace for trusted local workers — plumbers, electricians,
+              Sri Lanka&apos;s marketplace for trusted local workers: plumbers, electricians,
               painters, movers and more. Post a task, get bids, get it done.
             </p>
             <div className="flex items-center gap-md mt-xl">

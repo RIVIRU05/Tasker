@@ -71,7 +71,7 @@ export default function LoginPage() {
               placeholder="••••••••"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              hint={USE_MOCK ? "This is a prototype — any password works for demo accounts." : undefined}
+              hint={USE_MOCK ? "This is a prototype, any password works for demo accounts." : undefined}
             />
             {error && <p className="text-body-sm text-danger">{error}</p>}
             <Button type="submit" variant="primary" size="lg" className="justify-center" disabled={loading}>

@@ -131,7 +131,7 @@ export function TaskDetailScreen({ route, navigation }: any) {
           <AlertTriangle size={18} color={colors.danger} />
           <View style={{ flex: 1 }}>
             <Text style={styles.disputeTitle}>This task is under dispute review</Text>
-            <Text style={styles.disputeText}>TaskHub is reviewing evidence — typically 3–5 days.</Text>
+            <Text style={styles.disputeText}>Tasker is reviewing evidence, typically 3-5 days.</Text>
           </View>
         </Card>
       )}
@@ -192,7 +192,7 @@ export function TaskDetailScreen({ route, navigation }: any) {
           <Text style={styles.body}>This task is already assigned.</Text>
         )}
         {user && isCustomer && task.status === "in_progress" && <Text style={styles.body}>Work is in progress.</Text>}
-        {user && isCustomer && task.status === "open" && <Text style={styles.body}>Waiting for bids — accept one below.</Text>}
+        {user && isCustomer && task.status === "open" && <Text style={styles.body}>Waiting for bids, accept one below.</Text>}
 
         {user && user.id === task.workerId && task.status === "assigned" && task.paymentStatus === "pending" && (
           <Text style={styles.body}>Waiting for the customer to complete payment before you can start.</Text>
@@ -340,7 +340,7 @@ function PayNowInline({ task, onPaid }: { task: Task; onPaid: () => void }) {
         onChangeText={setCard}
         keyboardType="number-pad"
         maxLength={19}
-        hint="Demo checkout — any card number works, nothing is actually charged."
+        hint="Demo checkout: any card number works, nothing is actually charged."
       />
       <Button label={processing ? "Processing…" : `Pay ${formatMoney(task.paymentAmount, task.location.country)}`} onPress={handlePay} loading={processing} />
       <View style={payStyles.escrowRow}>
@@ -397,7 +397,7 @@ function DisputeAction({ task, currentUser, onChange }: { task: Task; currentUse
     <View style={disputeStyles.form}>
       <Textarea
         label="What's wrong?"
-        placeholder="Describe the issue — the more detail, the faster this gets resolved."
+        placeholder="Describe the issue: the more detail, the faster this gets resolved."
         value={description}
         onChangeText={setDescription}
       />

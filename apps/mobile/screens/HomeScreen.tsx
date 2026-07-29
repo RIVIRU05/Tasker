@@ -73,7 +73,7 @@ export function HomeScreen({ navigation }: any) {
 
       {!tasks && !error && <Text style={styles.bodyText}>Loading…</Text>}
       {error && <Text style={styles.bodyText}>Couldn&apos;t load tasks right now.</Text>}
-      {tasks && tasks.length === 0 && <Text style={styles.bodyText}>No open tasks yet — be the first to post one.</Text>}
+      {tasks && tasks.length === 0 && <Text style={styles.bodyText}>No open tasks yet, be the first to post one.</Text>}
 
       {tasks?.slice(0, 8).map((task) => (
         <TaskListItem key={task.id} task={task} onPress={() => navigation.navigate("TaskDetail", { taskId: task.id })} />

@@ -6,7 +6,7 @@ export default function AboutPage() {
       <div className="max-w-2xl">
         <h1 className="text-display-xl font-display text-ink">About Tasker</h1>
         <p className="text-body-lg text-body mt-lg">
-          Tasker connects Sri Lankan homeowners and businesses with skilled local workers —
+          Tasker connects Sri Lankan homeowners and businesses with skilled local workers:
           plumbers, electricians, painters, movers, welders and more. We started in Colombo with
           one goal: make it as easy to book a trusted plumber as it is to book a ride.
         </p>
@@ -40,7 +40,7 @@ export default function AboutPage() {
           <div>
             <h3 className="text-body-lg font-text font-medium text-ink">Fair pricing</h3>
             <p className="text-body-md text-body mt-xs">
-              We take a 12% commission on completed tasks — 9% for verified student workers — and
+              We take a 12% commission on completed tasks (9% for verified student workers) and
               nothing else. No listing fees, no subscriptions.
             </p>
           </div>
@@ -48,7 +48,7 @@ export default function AboutPage() {
             <h3 className="text-body-lg font-text font-medium text-ink">Built for Sri Lanka</h3>
             <p className="text-body-md text-body mt-xs">
               LKR pricing, local payment methods, and a dispute process designed around how work
-              actually gets done here — not adapted from a foreign playbook.
+              actually gets done here, not adapted from a foreign playbook.
             </p>
           </div>
         </div>

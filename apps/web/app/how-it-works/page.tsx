@@ -8,7 +8,7 @@ export default function HowItWorksPage() {
       <section className="max-w-container mx-auto px-lg lg:px-3xl py-3xl text-center">
         <h1 className="text-display-xl font-display text-ink">How Tasker works</h1>
         <p className="text-body-lg text-body mt-lg max-w-lg mx-auto">
-          From posting a task to getting paid — here&apos;s exactly what happens at each step.
+          From posting a task to getting paid, here&apos;s exactly what happens at each step.
         </p>
       </section>
 
@@ -18,10 +18,10 @@ export default function HowItWorksPage() {
             <h2 className="text-display-md font-display text-ink mb-lg">For customers</h2>
             <ol className="flex flex-col gap-lg">
               {[
-                ["Post your task", "Title, description, photos, budget and location — takes under 2 minutes."],
+                ["Post your task", "Title, description, photos, budget and location. Takes under 2 minutes."],
                 ["Compare bids", "Workers bid with a price and message. Sort by rating or price."],
                 ["Accept & pay into escrow", "Your payment is held safely until the work is done."],
-                ["Approve completion", "Review before/after photos, then release payment — or raise a dispute."],
+                ["Approve completion", "Review before/after photos, then release payment or raise a dispute."],
                 ["Rate the worker", "Help the next customer choose well."],
               ].map(([title, desc], i) => (
                 <li key={title} className="flex gap-lg">
@@ -48,7 +48,7 @@ export default function HowItWorksPage() {
                 ["Browse open tasks", "Filter by category and location near you."],
                 ["Submit a bid", "Offer your price and a short message explaining your approach."],
                 ["Do the job, document it", "Before/after photos protect both sides if anything's disputed."],
-                ["Get paid", "Funds release from escrow once the customer approves — 80–85% is yours."],
+                ["Get paid", "Funds release from escrow once the customer approves. 80-85% is yours."],
               ].map(([title, desc], i) => (
                 <li key={title} className="flex gap-lg">
                   <span className="w-7 h-7 rounded-full bg-primary-600 text-on-dark flex items-center justify-center text-body-sm-strong shrink-0">
@@ -90,7 +90,7 @@ export default function HowItWorksPage() {
             <Lock size={20} className="mb-lg" />
             <h3 className="text-display-sm font-display text-ink">Escrow payments</h3>
             <p className="text-body-sm text-body mt-sm">
-              Money moves to escrow the moment you accept a bid — the worker only gets paid once
+              Money moves to escrow the moment you accept a bid. The worker only gets paid once
               you approve the finished job, or automatically after 48 hours.
             </p>
           </Card>
@@ -139,7 +139,7 @@ export default function HowItWorksPage() {
         <Card variant="soft" className="flex items-center gap-lg">
           <Star size={22} className="shrink-0" />
           <p className="text-body-md text-ink">
-            Verify with a <strong>.ac.lk</strong> email for student pricing — a 10% discount as a
+            Verify with a <strong>.ac.lk</strong> email for student pricing: a 10% discount as a
             customer, or a reduced 9% commission as a worker.
           </p>
         </Card>

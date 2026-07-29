@@ -47,7 +47,7 @@ export function PhotoPicker({ label, value, onChange, pathPrefix, multiple = fal
       }
       onChange(multiple ? [...value, ...uploaded] : uploaded);
     } catch {
-      Alert.alert("Upload failed", "Couldn't upload that photo — check your connection and try again.");
+      Alert.alert("Upload failed", "Couldn't upload that photo. Check your connection and try again.");
     } finally {
       setUploading(false);
     }

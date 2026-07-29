@@ -38,7 +38,7 @@ export function RatingForm({ taskId, ratedById, ratedUserId, ratingType, onSubmi
   }
 
   if (done) {
-    return <p className="text-body-md text-ink">Thanks for the feedback — your review is posted.</p>;
+    return <p className="text-body-md text-ink">Thanks for the feedback, your review is posted.</p>;
   }
 
   return (

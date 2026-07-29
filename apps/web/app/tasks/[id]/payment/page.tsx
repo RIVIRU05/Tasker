@@ -93,7 +93,7 @@ export default function PaymentPage() {
                 </span>
                 <div>
                   <p className="text-body-md-strong text-ink">Paid via PayHere</p>
-                  <p className="text-body-sm text-mute">Demo transaction — no real charge</p>
+                  <p className="text-body-sm text-mute">Demo transaction, no real charge</p>
                 </div>
               </div>
 
@@ -164,7 +164,7 @@ function PayNowCard({ task, onPaid }: { task: Task; onPaid: () => void }) {
           maxLength={19}
           value={card}
           onChange={(e) => setCard(e.target.value)}
-          hint="Demo checkout — any card number works, nothing is actually charged."
+          hint="Demo checkout: any card number works, nothing is actually charged."
         />
         <div className="grid grid-cols-2 gap-lg">
           <Input id="expiry" label="Expiry" placeholder="12/28" required />

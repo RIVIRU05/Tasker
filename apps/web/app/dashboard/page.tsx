@@ -127,7 +127,7 @@ export default function DashboardPage() {
             <h2 className="text-display-sm font-display text-ink mb-lg">Active jobs ({assignedJobs.length})</h2>
             {assignedJobs.length === 0 ? (
               <Card variant="soft">
-                <p className="text-body-md text-body">No active jobs yet — browse open tasks to place a bid.</p>
+                <p className="text-body-md text-body">No active jobs yet. Browse open tasks to place a bid.</p>
                 <Button href="/tasks" variant="primary" className="mt-lg">
                   Browse tasks
                 </Button>

@@ -50,7 +50,7 @@ export function ChatPanel({ taskId, currentUser, otherUser }: ChatPanelProps) {
 
       <div className="flex-1 overflow-y-auto px-lg py-lg flex flex-col gap-md">
         {messages.length === 0 && (
-          <p className="text-body-sm text-mute text-center mt-2xl">No messages yet — say hello.</p>
+          <p className="text-body-sm text-mute text-center mt-2xl">No messages yet, say hello.</p>
         )}
         {messages.map((msg) => {
           const isMe = msg.fromUserId === currentUser.id;

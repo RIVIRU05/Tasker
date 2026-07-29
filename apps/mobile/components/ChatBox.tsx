@@ -31,7 +31,7 @@ export function ChatBox({ taskId, currentUser, otherUser }: { taskId: string; cu
     <View style={styles.wrap}>
       <Text style={styles.header}>Messages with {otherUser.name}</Text>
       <View style={styles.messages}>
-        {messages.length === 0 && <Text style={styles.empty}>No messages yet — say hello.</Text>}
+        {messages.length === 0 && <Text style={styles.empty}>No messages yet, say hello.</Text>}
         {messages.map((msg) => {
           const isMe = msg.fromUserId === currentUser.id;
           return (

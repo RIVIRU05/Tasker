@@ -182,7 +182,7 @@ export function PostTaskScreen({ navigation }: any) {
           <>
             <Text style={styles.reviewTitle}>{form.title || "Untitled task"}</Text>
             <Text style={styles.body}>{form.description}</Text>
-            <Text style={styles.body}>Location: {form.city || "—"}, {COUNTRY_LABELS[form.country]}</Text>
+            <Text style={styles.body}>Location: {form.city || "Not set"}, {COUNTRY_LABELS[form.country]}</Text>
             <Text style={styles.body}>Timeline: {form.timeline}</Text>
             <Text style={styles.body}>
               Budget: {COUNTRY_CURRENCY[form.country]} {form.budgetMin || 0} – {form.budgetMax || 0}

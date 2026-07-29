@@ -15,7 +15,7 @@ const DESCRIPTIONS: Record<TaskCategory, string> = {
   welding: "Gates, grills, staircase railings, structural steel work.",
   gardening: "Lawn maintenance, hedge trimming, garden design and irrigation.",
   appliance_repair: "Washing machines, refrigerators, AC units, general appliance diagnosis.",
-  other: "Anything else — post a task and describe what you need.",
+  other: "Anything else: post a task and describe what you need.",
 };
 
 export default function ServicesPage() {
