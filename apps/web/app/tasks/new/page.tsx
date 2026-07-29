@@ -4,15 +4,19 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { getClient } from "@taskhub/data";
 import type { TaskCategory, TaskTimeline } from "@taskhub/shared";
-import { CATEGORY_LABELS } from "@taskhub/shared";
+import { CATEGORY_LABELS, COUNTRY_CURRENCY, COUNTRY_LABELS } from "@taskhub/shared";
 import { useSession } from "@/lib/session";
+import { useCountry } from "@/lib/country";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input, Textarea, Select } from "@/components/ui/Input";
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { PhotoUploadInput } from "@/components/PhotoUploadInput";
 import { LocationAutocomplete } from "@/components/LocationAutocomplete";
-import type { LocationSuggestion } from "@taskhub/shared";
+import type { CountryCode, LocationSuggestion } from "@taskhub/shared";
+
+const COUNTRIES: CountryCode[] = ["LK", "AU"];
+const COUNTRY_FLAGS: Record<CountryCode, string> = { LK: "🇱🇰", AU: "🇦🇺" };
 
 const CATEGORIES = Object.keys(CATEGORY_LABELS) as TaskCategory[];
 const STEPS = ["Details", "Budget & timeline", "Photos", "Review"];
@@ -20,6 +24,7 @@ const STEPS = ["Details", "Budget & timeline", "Photos", "Review"];
 export default function NewTaskPage() {
   const router = useRouter();
   const { user, loading } = useSession();
+  const { country: browsingCountry } = useCountry();
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [uploadId] = useState(() => Math.random().toString(36).slice(2, 10));
@@ -35,6 +40,8 @@ export default function NewTaskPage() {
     timeline: "flexible" as TaskTimeline,
     scheduledDate: "",
     photos: [] as string[],
+    district: undefined as string | undefined,
+    country: browsingCountry as CountryCode,
     lat: null as number | null,
     lng: null as number | null,
   });
@@ -61,26 +68,32 @@ export default function NewTaskPage() {
   async function handleSubmit() {
     if (!user) return;
     setSubmitting(true);
-    let { lat, lng } = form;
+    let { lat, lng, district } = form;
     if (lat == null || lng == null) {
       try {
-        const res = await fetch(`/api/geocode?q=${encodeURIComponent(form.city)}`);
+        const res = await fetch(`/api/geocode?q=${encodeURIComponent(form.city)}&country=${form.country}`);
         const data = await res.json();
         const top: LocationSuggestion | undefined = data.results?.[0];
         if (top) {
           lat = top.lat;
           lng = top.lng;
+          district = top.district;
         }
-      } catch {
-        // handled by the Colombo fallback below
-      }
+      } catch {}
     }
     const task = await getClient().createTask({
       title: form.title,
       description: form.description,
       category: form.category,
       photos: form.photos,
-      location: { address: form.address || form.city, city: form.city, lat: lat ?? 6.9271, lng: lng ?? 79.8612 },
+      location: {
+        address: form.address || form.city,
+        city: form.city,
+        district,
+        country: form.country,
+        lat: lat ?? (form.country === "AU" ? -33.8688 : 6.9271),
+        lng: lng ?? (form.country === "AU" ? 151.2093 : 79.8612),
+      },
       budgetMin: Number(form.budgetMin),
       budgetMax: Number(form.budgetMax),
       timeline: form.timeline,
@@ -101,7 +114,7 @@ export default function NewTaskPage() {
             <div key={label} className="flex items-center gap-sm">
               <span
                 className={`w-7 h-7 rounded-full flex items-center justify-center text-body-sm-strong ${
-                  i <= step ? "bg-primary-600 text-on-dark" : "bg-canvas-soft text-mute"
+                  i <= step ? "bg-accent-500 text-on-dark" : "bg-canvas-soft text-mute"
                 }`}
               >
                 {i + 1}
@@ -118,6 +131,23 @@ export default function NewTaskPage() {
           {step === 0 && (
             <div className="flex flex-col gap-lg">
               <div>
+                <span className="block text-body-sm-strong text-ink mb-sm">Country</span>
+                <div className="grid grid-cols-2 gap-sm">
+                  {COUNTRIES.map((c) => (
+                    <button
+                      type="button"
+                      key={c}
+                      onClick={() => setForm((f) => ({ ...f, country: c, city: "", district: undefined, lat: null, lng: null }))}
+                      className={`flex items-center justify-center gap-sm rounded-md px-md py-md text-body-sm-strong transition-colors ${
+                        form.country === c ? "bg-accent-500 text-on-dark" : "bg-canvas-soft text-ink hover:bg-surface-pressed"
+                      }`}
+                    >
+                      {COUNTRY_FLAGS[c]} {COUNTRY_LABELS[c]}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
                 <span className="block text-body-sm-strong text-ink mb-sm">Category</span>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-sm">
                   {CATEGORIES.map((cat) => (
@@ -126,7 +156,7 @@ export default function NewTaskPage() {
                       key={cat}
                       onClick={() => setForm((f) => ({ ...f, category: cat }))}
                       className={`flex items-center gap-sm rounded-md px-md py-md text-body-sm-strong transition-colors ${
-                        form.category === cat ? "bg-primary-600 text-on-dark" : "bg-canvas-soft text-ink hover:bg-surface-pressed"
+                        form.category === cat ? "bg-accent-500 text-on-dark" : "bg-canvas-soft text-ink hover:bg-surface-pressed"
                       }`}
                     >
                       <CategoryIcon category={cat} size={16} />
@@ -156,10 +186,11 @@ export default function NewTaskPage() {
                 <LocationAutocomplete
                   label="City / area"
                   required
-                  placeholder="e.g. Nugegoda, Colombo"
+                  placeholder={form.country === "AU" ? "e.g. Parramatta, Sydney" : "e.g. Nugegoda, Colombo"}
                   value={form.city}
-                  onChange={(city) => setForm((f) => ({ ...f, city, lat: null, lng: null }))}
-                  onSelect={(s) => setForm((f) => ({ ...f, city: s.city, lat: s.lat, lng: s.lng }))}
+                  country={form.country}
+                  onChange={(city) => setForm((f) => ({ ...f, city, district: undefined, lat: null, lng: null }))}
+                  onSelect={(s) => setForm((f) => ({ ...f, city: s.city, district: s.district, lat: s.lat, lng: s.lng }))}
                 />
                 <Input
                   id="address"
@@ -178,7 +209,7 @@ export default function NewTaskPage() {
                 <Input
                   id="budgetMin"
                   type="number"
-                  label="Budget min (LKR)"
+                  label={`Budget min (${COUNTRY_CURRENCY[form.country]})`}
                   required
                   min={0}
                   value={form.budgetMin}
@@ -187,7 +218,7 @@ export default function NewTaskPage() {
                 <Input
                   id="budgetMax"
                   type="number"
-                  label="Budget max (LKR)"
+                  label={`Budget max (${COUNTRY_CURRENCY[form.country]})`}
                   required
                   min={0}
                   value={form.budgetMax}
@@ -241,14 +272,15 @@ export default function NewTaskPage() {
               </div>
               <div className="grid sm:grid-cols-2 gap-lg text-body-sm text-body">
                 <p>
-                  <span className="text-mute">Location:</span> {form.city || "—"}
+                  <span className="text-mute">Location:</span> {form.city || "—"}, {COUNTRY_LABELS[form.country]}
                 </p>
                 <p>
                   <span className="text-mute">Timeline:</span> {form.timeline}
                   {form.timeline === "scheduled" && form.scheduledDate ? ` (${form.scheduledDate})` : ""}
                 </p>
                 <p>
-                  <span className="text-mute">Budget:</span> LKR {form.budgetMin || 0} – {form.budgetMax || 0}
+                  <span className="text-mute">Budget:</span> {COUNTRY_CURRENCY[form.country]} {form.budgetMin || 0} –{" "}
+                  {form.budgetMax || 0}
                 </p>
               </div>
             </div>

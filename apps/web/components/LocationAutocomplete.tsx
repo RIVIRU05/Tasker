@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { MapPin } from "lucide-react";
-import type { LocationSuggestion } from "@taskhub/shared";
+import type { CountryCode, LocationSuggestion } from "@taskhub/shared";
 
 interface LocationAutocompleteProps {
   label: string;
@@ -10,6 +10,7 @@ interface LocationAutocompleteProps {
   value: string;
   onChange: (text: string) => void;
   onSelect: (suggestion: LocationSuggestion) => void;
+  country?: CountryCode;
   required?: boolean;
 }
 
@@ -19,6 +20,7 @@ export function LocationAutocomplete({
   value,
   onChange,
   onSelect,
+  country,
   required,
 }: LocationAutocompleteProps) {
   const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([]);
@@ -39,7 +41,8 @@ export function LocationAutocomplete({
     const handle = setTimeout(async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/geocode?q=${encodeURIComponent(value)}`);
+        const countryQuery = country ? `&country=${country}` : "";
+        const res = await fetch(`/api/geocode?q=${encodeURIComponent(value)}${countryQuery}`);
         const data = await res.json();
         setSuggestions(data.results ?? []);
         setOpen(true);
@@ -48,7 +51,7 @@ export function LocationAutocomplete({
       }
     }, 400);
     return () => clearTimeout(handle);
-  }, [value]);
+  }, [value, country]);
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {

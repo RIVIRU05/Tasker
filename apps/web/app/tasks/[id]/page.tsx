@@ -6,8 +6,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { MapPin, Clock, AlertTriangle, ShieldCheck } from "lucide-react";
 import { getClient } from "@taskhub/data";
-import type { Bid, Task, User } from "@taskhub/shared";
-import { CATEGORY_LABELS, formatLKR } from "@taskhub/shared";
+import type { Bid, CountryCode, Task, User } from "@taskhub/shared";
+import { CATEGORY_LABELS, formatMoney } from "@taskhub/shared";
 import { useSession } from "@/lib/session";
 import { isAdmin } from "@/lib/admin";
 import { Card } from "@/components/ui/Card";
@@ -185,7 +185,6 @@ export default function TaskDetailPage() {
             </Card>
           )}
 
-          {/* Bids */}
           {task.status === "open" && (
             <div>
               <h2 className="text-display-sm font-display text-ink mb-lg">
@@ -200,6 +199,7 @@ export default function TaskDetailPage() {
                       key={bid.id}
                       bid={bid}
                       bidder={bidder}
+                      country={task.location.country}
                       canAccept={isCustomer && task.status === "open"}
                       onAccepted={load}
                     />
@@ -212,7 +212,6 @@ export default function TaskDetailPage() {
 
           {canBid && <BidForm taskId={task.id} workerId={user!.id} onSubmitted={load} />}
 
-          {/* Chat */}
           {task.workerId && customer && worker && user && (user.id === task.customerId || user.id === task.workerId) && (
             <div>
               <h2 className="text-display-sm font-display text-ink mb-lg">Messages</h2>
@@ -221,15 +220,14 @@ export default function TaskDetailPage() {
           )}
         </div>
 
-        {/* Sidebar */}
         <div className="flex flex-col gap-lg lg:sticky lg:top-[96px]">
           <Card variant="elevated">
             <p className="text-body-sm text-mute">Budget</p>
             <p className="text-display-sm font-display text-ink mt-xs">
-              {formatLKR(task.budgetMin)} – {formatLKR(task.budgetMax)}
+              {formatMoney(task.budgetMin, task.location.country)} – {formatMoney(task.budgetMax, task.location.country)}
             </p>
             {task.paymentAmount > 0 && (
-              <p className="text-body-sm text-body mt-sm">Agreed price: {formatLKR(task.paymentAmount)}</p>
+              <p className="text-body-sm text-body mt-sm">Agreed price: {formatMoney(task.paymentAmount, task.location.country)}</p>
             )}
 
             <div className="flex flex-col gap-sm mt-lg">
@@ -268,21 +266,25 @@ export default function TaskDetailPage() {
 function BidRow({
   bid,
   bidder,
+  country,
   canAccept,
   onAccepted,
 }: {
   bid: Bid;
   bidder: User;
+  country?: CountryCode;
   canAccept: boolean;
   onAccepted: () => void;
 }) {
+  const router = useRouter();
   const [accepting, setAccepting] = useState(false);
 
   async function handleAccept() {
     setAccepting(true);
-    await getClient().acceptBid(bid.id);
+    const task = await getClient().acceptBid(bid.id);
     setAccepting(false);
     onAccepted();
+    router.push(`/tasks/${task.id}/payment`);
   }
 
   return (
@@ -298,7 +300,7 @@ function BidRow({
             />
           </div>
         </Link>
-        <p className="text-display-sm font-display text-ink whitespace-nowrap">{formatLKR(bid.offeredPrice)}</p>
+        <p className="text-display-sm font-display text-ink whitespace-nowrap">{formatMoney(bid.offeredPrice, country)}</p>
       </div>
       {bidder.workerProfile && <BadgeRow badges={bidder.workerProfile.badges} />}
       <p className="text-body-md text-body mt-md">{bid.message}</p>
@@ -382,6 +384,18 @@ function TaskActions({
     await fn();
     setBusy(false);
     onChange();
+  }
+
+  if (isCustomer && task.status === "assigned" && task.paymentStatus === "pending") {
+    return (
+      <Button href={`/tasks/${task.id}/payment`} variant="primary" className="w-full justify-center">
+        Complete payment
+      </Button>
+    );
+  }
+
+  if (isWorker && task.status === "assigned" && task.paymentStatus === "pending") {
+    return <p className="text-body-sm text-body">Waiting for the customer to complete payment before you can start.</p>;
   }
 
   if (isWorker && task.status === "assigned") {

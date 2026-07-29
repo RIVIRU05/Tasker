@@ -4,7 +4,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { Clock } from "lucide-react";
 import type { Task } from "@taskhub/shared";
-import { CATEGORY_LABELS, formatLKR } from "@taskhub/shared";
+import { CATEGORY_LABELS, formatMoney } from "@taskhub/shared";
 import { StatusPill } from "./ui/StatusPill";
 import { CategoryIcon } from "./CategoryIcon";
 
@@ -42,7 +42,7 @@ export function TaskCard({ task }: { task: Task }) {
           </span>
         </div>
         <p className="text-body-sm-strong text-ink">
-          {formatLKR(task.budgetMin)} – {formatLKR(task.budgetMax)}
+          {formatMoney(task.budgetMin, task.location.country)} – {formatMoney(task.budgetMax, task.location.country)}
         </p>
       </div>
     </Link>

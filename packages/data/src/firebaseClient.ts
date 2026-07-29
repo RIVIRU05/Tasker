@@ -36,18 +36,8 @@ function nowIso() {
   return new Date().toISOString();
 }
 
-/**
- * React Native/Hermes' fetch implementation intermittently fails in-flight
- * requests for reasons unrelated to actual connectivity (same underlying
- * flakiness that made Firestore need experimentalForceLongPolling). Auth's
- * REST calls have no long-polling equivalent, so retry transient failures
- * a few times with backoff before surfacing an error to the user.
- *
- * "unavailable" is Firestore's code for "client is offline" — this fires
- * when a read happens before Firestore's connection (especially over forced
- * long-polling) has finished establishing, e.g. immediately after a fresh
- * login/signup. It resolves itself within a second or two, so retry it too.
- */
+// React Native/Hermes' fetch intermittently fails in-flight requests unrelated to actual connectivity.
+// Retry both auth's network errors and Firestore's "unavailable" (client offline) code before giving up.
 const RETRYABLE_CODES = new Set(["auth/network-request-failed", "unavailable"]);
 
 async function withNetworkRetry<T>(fn: () => Promise<T>, attempts = 3): Promise<T> {
@@ -71,7 +61,7 @@ function getDocs<T>(q: Query<T>) {
   return withNetworkRetry(() => getDocsRaw(q));
 }
 
-/** Firestore rejects `undefined` field values outright — strip them before every write. */
+/** Firestore rejects `undefined` field values outright, so strip them before every write. */
 function stripUndefined<T extends object>(obj: T): T {
   const clean: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(obj)) {
@@ -201,6 +191,8 @@ export class FirebaseTaskHubClient implements TaskHubClient {
     }
     if (filters?.status) tasks = tasks.filter((t) => t.status === filters.status);
     if (filters?.city) tasks = tasks.filter((t) => t.location.city.toLowerCase().includes(filters.city!.toLowerCase()));
+    if (filters?.district) tasks = tasks.filter((t) => t.location.district === filters.district);
+    if (filters?.country) tasks = tasks.filter((t) => t.location.country === filters.country);
     if (filters?.query) {
       const q = filters.query.toLowerCase();
       tasks = tasks.filter((t) => t.title.toLowerCase().includes(q) || t.description.toLowerCase().includes(q));
@@ -296,32 +288,45 @@ export class FirebaseTaskHubClient implements TaskHubClient {
     batch.update(taskRef, {
       status: "assigned",
       workerId: bid.workerId,
-      paymentStatus: "escrow",
+      paymentStatus: "pending",
       paymentAmount: bid.offeredPrice,
       platformFee: payout.platformFee,
       workerAmount: payout.workerAmount,
       updatedAt: nowIso(),
     });
 
-    const txnRef = doc(this.col("transactions"));
-    const txn: Transaction = {
-      id: txnRef.id,
-      taskId: bid.taskId,
-      customerId: task.customerId,
-      workerId: bid.workerId,
-      amount: bid.offeredPrice,
-      platformFee: payout.platformFee,
-      workerAmount: payout.workerAmount,
-      status: "escrow",
-      createdAt: nowIso(),
-      escrowStartedAt: nowIso(),
-    };
-    batch.set(txnRef, txn);
-
     await batch.commit();
     const updated = await this.getTask(bid.taskId);
     if (!updated) throw new Error("Task not found after accept");
     return updated;
+  }
+
+  async fundEscrow(taskId: string): Promise<Transaction> {
+    const db = getFirebaseDb();
+    const task = await this.getTask(taskId);
+    if (!task) throw new Error("Task not found");
+    if (!task.workerId) throw new Error("Task has no assigned worker yet");
+
+    const txnRef = doc(this.col("transactions"));
+    const txn: Transaction = {
+      id: txnRef.id,
+      taskId: task.id,
+      customerId: task.customerId,
+      workerId: task.workerId,
+      amount: task.paymentAmount,
+      platformFee: task.platformFee,
+      workerAmount: task.workerAmount,
+      status: "escrow",
+      createdAt: nowIso(),
+      escrowStartedAt: nowIso(),
+    };
+
+    const batch = writeBatch(db);
+    batch.set(txnRef, txn);
+    batch.update(doc(db, "tasks", taskId), { paymentStatus: "escrow", updatedAt: nowIso() });
+    await batch.commit();
+
+    return txn;
   }
 
   async getMessages(taskId: string): Promise<Message[]> {
@@ -492,9 +497,7 @@ export class FirebaseTaskHubClient implements TaskHubClient {
         "workerProfile.rating.completedJobs": increment(1),
       });
     }
-    // Reachable only when paymentStatus was "escrow" — i.e. no dispute was
-    // ever filed on this task — so it's safe to clean up the proof-of-work
-    // photos now that the customer has approved and payment has released.
+    // Only reached when paymentStatus was "escrow", meaning no dispute was ever filed, so this is safe to delete now.
     if (task.completionPhotos.length > 0) {
       await Promise.allSettled(task.completionPhotos.map((url) => deletePhotoByUrl(url)));
       await updateDoc(doc(getFirebaseDb(), "tasks", taskId), { completionPhotos: [] });

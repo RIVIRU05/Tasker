@@ -116,7 +116,7 @@ export default function WorkerProfilePage() {
                 <p className="text-body-sm text-body">Years experience</p>
               </div>
               <div>
-                <p className="text-display-sm font-display text-ink">{worker.isStudent ? "15%" : "20%"}</p>
+                <p className="text-display-sm font-display text-ink">{worker.isStudent ? "9%" : "12%"}</p>
                 <p className="text-body-sm text-body">Platform fee</p>
               </div>
             </div>

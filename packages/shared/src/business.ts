@@ -1,7 +1,7 @@
-import type { WorkerProfile } from "./types";
+import type { CountryCode, WorkerProfile } from "./types";
 
-export const REGULAR_COMMISSION_RATE = 0.2;
-export const STUDENT_COMMISSION_RATE = 0.15;
+export const REGULAR_COMMISSION_RATE = 0.12;
+export const STUDENT_COMMISSION_RATE = 0.09;
 export const STUDENT_CUSTOMER_DISCOUNT = 0.1;
 
 export const MIN_JOBS_FOR_HIGH_VISIBILITY = 5;
@@ -50,12 +50,26 @@ export function shouldSuspendForNoShows(profile: WorkerProfile) {
   return profile.rating.noShowCount >= NO_SHOW_SUSPENSION_THRESHOLD;
 }
 
-export function formatLKR(amount: number): string {
-  return new Intl.NumberFormat("en-LK", {
+export const COUNTRY_CURRENCY: Record<CountryCode, string> = {
+  LK: "LKR",
+  AU: "AUD",
+};
+
+export const COUNTRY_LABELS: Record<CountryCode, string> = {
+  LK: "Sri Lanka",
+  AU: "Australia",
+};
+
+export function formatMoney(amount: number, country: CountryCode = "LK"): string {
+  return new Intl.NumberFormat(country === "AU" ? "en-AU" : "en-LK", {
     style: "currency",
-    currency: "LKR",
+    currency: COUNTRY_CURRENCY[country],
     maximumFractionDigits: 0,
   }).format(amount);
+}
+
+export function formatLKR(amount: number): string {
+  return formatMoney(amount, "LK");
 }
 
 export const CATEGORY_LABELS: Record<string, string> = {

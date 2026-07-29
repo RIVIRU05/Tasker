@@ -1,5 +1,7 @@
 export type UserType = "customer" | "worker" | "both";
 
+export type CountryCode = "LK" | "AU";
+
 export type TaskCategory =
   | "plumbing"
   | "electrical"
@@ -113,6 +115,8 @@ export interface Task {
   location: {
     address: string;
     city: string;
+    district?: string;
+    country?: CountryCode;
     lat: number;
     lng: number;
   };
@@ -187,7 +191,38 @@ export interface Transaction {
 export interface LocationSuggestion {
   label: string;
   city: string;
+  district?: string;
+  province?: string;
+  country?: CountryCode;
   address: string;
   lat: number;
   lng: number;
 }
+
+export const SRI_LANKA_DISTRICTS = [
+  "Colombo",
+  "Gampaha",
+  "Kalutara",
+  "Kandy",
+  "Matale",
+  "Nuwara Eliya",
+  "Galle",
+  "Matara",
+  "Hambantota",
+  "Jaffna",
+  "Kilinochchi",
+  "Mannar",
+  "Vavuniya",
+  "Mullaitivu",
+  "Batticaloa",
+  "Ampara",
+  "Trincomalee",
+  "Kurunegala",
+  "Puttalam",
+  "Anuradhapura",
+  "Polonnaruwa",
+  "Badulla",
+  "Monaragala",
+  "Ratnapura",
+  "Kegalle",
+] as const;

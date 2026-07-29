@@ -1,5 +1,6 @@
 import type {
   Bid,
+  CountryCode,
   Dispute,
   DisputeResolution,
   DisputeStatus,
@@ -16,6 +17,8 @@ export interface TaskFilters {
   category?: TaskCategory;
   status?: TaskStatus;
   city?: string;
+  district?: string;
+  country?: CountryCode;
   query?: string;
 }
 
@@ -24,7 +27,7 @@ export interface NewTaskInput {
   description: string;
   category: TaskCategory;
   photos: string[];
-  location: { address: string; city: string; lat: number; lng: number };
+  location: { address: string; city: string; district?: string; country?: CountryCode; lat: number; lng: number };
   budgetMin: number;
   budgetMax: number;
   timeline: Task["timeline"];
@@ -104,6 +107,7 @@ export interface TaskHubClient {
   resolveDispute(input: ResolveDisputeInput): Promise<Dispute>;
 
   getTransactionForTask(taskId: string): Promise<Transaction | undefined>;
+  fundEscrow(taskId: string): Promise<Transaction>;
   releasePayment(taskId: string): Promise<Transaction>;
 
   markTaskComplete(taskId: string, completionPhotos: string[]): Promise<Task>;

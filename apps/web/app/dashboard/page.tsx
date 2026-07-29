@@ -51,6 +51,10 @@ export default function DashboardPage() {
 
   if (!user) return null;
 
+  const totalEarnings = assignedJobs
+    .filter((t) => t.paymentStatus === "released")
+    .reduce((sum, t) => sum + t.workerAmount, 0);
+
   return (
     <div className="max-w-container mx-auto px-lg lg:px-3xl py-3xl">
       <div className="flex items-center justify-between mb-3xl flex-wrap gap-lg">
@@ -104,6 +108,21 @@ export default function DashboardPage() {
 
       {user.workerProfile && (
         <>
+          <section className="mb-3xl">
+            <Card variant="on-dark" className="flex items-center justify-between flex-wrap gap-lg">
+              <div>
+                <p className="text-body-sm text-white/70">Total earnings</p>
+                <p className="text-display-lg font-display text-on-dark mt-xs">{formatLKR(totalEarnings)}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-body-sm text-white/70">Jobs completed</p>
+                <p className="text-display-sm font-display text-on-dark mt-xs">
+                  {user.workerProfile.rating.completedJobs}
+                </p>
+              </div>
+            </Card>
+          </section>
+
           <section className="mb-3xl">
             <h2 className="text-display-sm font-display text-ink mb-lg">Active jobs ({assignedJobs.length})</h2>
             {assignedJobs.length === 0 ? (

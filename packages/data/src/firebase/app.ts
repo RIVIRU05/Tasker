@@ -8,28 +8,15 @@ let auth: Auth | null = null;
 let db: Firestore | null = null;
 let storage: FirebaseStorage | null = null;
 
-/**
- * `authInstance` lets a platform (e.g. React Native) hand in an Auth instance
- * built with its own persistence layer (AsyncStorage) instead of the default,
- * since that setup requires a platform-specific import this shared package
- * can't reference directly without breaking the web bundle.
- *
- * `forceLongPolling` works around a well-known Firestore-on-React-Native issue:
- * the SDK's default streaming transport (fetch-based WebChannel) frequently
- * fails to reach the backend on RN/Hermes with a "didn't respond within 10
- * seconds" error, even on a healthy connection. Long-polling avoids that.
- */
+// forceLongPolling works around Firestore's default transport frequently failing to reach the
+// backend on RN/Hermes. Do not remove without confirming Firestore reads/writes work on Android.
 export function initFirebase(config: FirebaseOptions, authInstance?: Auth, forceLongPolling?: boolean) {
   app = getApps().length ? getApps()[0]! : initializeApp(config);
   auth = authInstance ?? getAuth(app);
   db = forceLongPolling
     ? initializeFirestore(app, {
         experimentalForceLongPolling: true,
-        // Not in the public FirestoreSettings type in this SDK version, but the
-        // runtime settings object does support it and it's the standard companion
-        // fix for "could not reach backend" on Hermes — fetch's streaming Response
-        // body isn't fully supported there, which otherwise silently breaks the
-        // long-polling transport too.
+        // Not in the public FirestoreSettings type here, but required alongside forceLongPolling on Hermes.
         ...({ useFetchStreams: false } as object),
       })
     : getFirestore(app);

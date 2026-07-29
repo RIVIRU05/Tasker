@@ -180,6 +180,8 @@ export class MockTaskHubClient implements TaskHubClient {
     if (filters?.category) tasks = tasks.filter((t) => t.category === filters.category);
     if (filters?.status) tasks = tasks.filter((t) => t.status === filters.status);
     if (filters?.city) tasks = tasks.filter((t) => t.location.city.toLowerCase().includes(filters.city!.toLowerCase()));
+    if (filters?.district) tasks = tasks.filter((t) => t.location.district === filters.district);
+    if (filters?.country) tasks = tasks.filter((t) => t.location.country === filters.country);
     if (filters?.query) {
       const q = filters.query.toLowerCase();
       tasks = tasks.filter(
@@ -269,27 +271,39 @@ export class MockTaskHubClient implements TaskHubClient {
       ...s.tasks[idx],
       status: "assigned",
       workerId: bid.workerId,
-      paymentStatus: "escrow",
+      paymentStatus: "pending",
       paymentAmount: bid.offeredPrice,
       platformFee: payout.platformFee,
       workerAmount: payout.workerAmount,
       updatedAt: nowIso(),
     };
+    persist();
+    return structuredClone(s.tasks[idx]);
+  }
+
+  async fundEscrow(taskId: string): Promise<Transaction> {
+    const s = getStore();
+    const idx = s.tasks.findIndex((t) => t.id === taskId);
+    if (idx === -1) throw new Error("Task not found");
+    const task = s.tasks[idx];
+    if (!task.workerId) throw new Error("Task has no assigned worker yet");
+
     const txn: Transaction = {
       id: uid("txn"),
-      taskId: bid.taskId,
-      customerId: s.tasks[idx].customerId,
-      workerId: bid.workerId,
-      amount: bid.offeredPrice,
-      platformFee: payout.platformFee,
-      workerAmount: payout.workerAmount,
+      taskId: task.id,
+      customerId: task.customerId,
+      workerId: task.workerId,
+      amount: task.paymentAmount,
+      platformFee: task.platformFee,
+      workerAmount: task.workerAmount,
       status: "escrow",
       createdAt: nowIso(),
       escrowStartedAt: nowIso(),
     };
     s.transactions.push(txn);
+    s.tasks[idx] = { ...task, paymentStatus: "escrow", updatedAt: nowIso() };
     persist();
-    return structuredClone(s.tasks[idx]);
+    return structuredClone(txn);
   }
 
   async getMessages(taskId: string): Promise<Message[]> {

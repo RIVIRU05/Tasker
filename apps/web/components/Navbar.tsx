@@ -2,12 +2,14 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { useSession } from "@/lib/session";
 import { isAdmin } from "@/lib/admin";
 import { Button } from "./ui/Button";
 import { Avatar } from "./ui/Avatar";
+import { CountryToggle } from "./CountryToggle";
 
 const LINKS = [
   { href: "/tasks", label: "Browse tasks" },
@@ -18,6 +20,8 @@ const LINKS = [
 export function Navbar() {
   const { user, loading } = useSession();
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const showCountryToggle = pathname !== "/tasks/new";
 
   return (
     <header className="sticky top-0 z-50 bg-canvas/95 backdrop-blur border-b border-black/[0.06]">
@@ -36,6 +40,7 @@ export function Navbar() {
         </div>
 
         <div className="hidden lg:flex items-center gap-md">
+          {showCountryToggle && <CountryToggle />}
           {!loading && !user && (
             <>
               <Button href="/login" variant="subtle">
@@ -75,6 +80,7 @@ export function Navbar() {
               {link.label}
             </Link>
           ))}
+          {showCountryToggle && <CountryToggle />}
           <div className="flex flex-col gap-sm pt-sm">
             {!loading && !user && (
               <>

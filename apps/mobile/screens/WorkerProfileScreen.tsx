@@ -73,7 +73,7 @@ export function WorkerProfileScreen({ route }: any) {
             <Text style={styles.metaText}>Years experience</Text>
           </View>
           <View style={styles.statItem}>
-            <Text style={styles.statValue}>{worker.isStudent ? "15%" : "20%"}</Text>
+            <Text style={styles.statValue}>{worker.isStudent ? "9%" : "12%"}</Text>
             <Text style={styles.metaText}>Platform fee</Text>
           </View>
         </View>

@@ -51,6 +51,10 @@ export function DashboardScreen({ navigation }: any) {
 
   if (!user) return null;
 
+  const totalEarnings = assignedJobs
+    .filter((t) => t.paymentStatus === "released")
+    .reduce((sum, t) => sum + t.workerAmount, 0);
+
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
       <View style={styles.headerRow}>
@@ -87,6 +91,17 @@ export function DashboardScreen({ navigation }: any) {
 
       {user.workerProfile && (
         <>
+          <Card variant="onDark" style={styles.earningsCard}>
+            <View>
+              <Text style={styles.earningsLabel}>Total earnings</Text>
+              <Text style={styles.earningsValue}>{formatLKR(totalEarnings)}</Text>
+            </View>
+            <View style={{ alignItems: "flex-end" }}>
+              <Text style={styles.earningsLabel}>Jobs completed</Text>
+              <Text style={styles.earningsCount}>{user.workerProfile.rating.completedJobs}</Text>
+            </View>
+          </Card>
+
           <View style={styles.sectionHeaderRow}>
             <Text style={styles.sectionTitle}>Active jobs ({assignedJobs.length})</Text>
             <StarRating value={user.workerProfile.rating.avgStars} reviewCount={user.workerProfile.rating.totalReviews} />
@@ -141,6 +156,10 @@ const styles = StyleSheet.create({
   heading: { ...type.displaySm, color: colors.ink },
   subheading: { ...type.bodySm, color: colors.body },
   actionsRow: { flexDirection: "row", gap: spacing.sm, marginBottom: spacing.xl },
+  earningsCard: { flexDirection: "row", justifyContent: "space-between", alignItems: "flex-start", marginTop: spacing.md },
+  earningsLabel: { ...type.bodySm, color: "rgba(255,255,255,0.7)" },
+  earningsValue: { ...type.displayMd, color: colors.onDark, marginTop: spacing.xxs },
+  earningsCount: { ...type.displaySm, color: colors.onDark, marginTop: spacing.xxs },
   sectionTitle: { ...type.displaySm, color: colors.ink, marginTop: spacing.xl, marginBottom: spacing.md },
   sectionHeaderRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: spacing.xl },
   body: { ...type.bodyMd, color: colors.body },

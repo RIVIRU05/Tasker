@@ -6,9 +6,7 @@ const workspaceRoot = path.resolve(projectRoot, "../..");
 
 const config = getDefaultConfig(projectRoot);
 
-// Expo's own default config already auto-detects the monorepo's workspace
-// packages (root node_modules, apps/*, packages/*) and watches them — merge
-// with that instead of replacing it, so nothing Expo relies on gets dropped.
+// Merge with Expo's default config instead of replacing it, so nothing Expo relies on gets dropped.
 config.watchFolders = Array.from(new Set([...config.watchFolders, workspaceRoot]));
 config.resolver.nodeModulesPaths = Array.from(
   new Set([...config.resolver.nodeModulesPaths, path.resolve(projectRoot, "node_modules"), path.resolve(workspaceRoot, "node_modules")])

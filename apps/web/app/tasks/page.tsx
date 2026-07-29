@@ -5,9 +5,10 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 import { getClient } from "@taskhub/data";
 import type { Task, TaskCategory } from "@taskhub/shared";
-import { CATEGORY_LABELS } from "@taskhub/shared";
+import { CATEGORY_LABELS, COUNTRY_LABELS, SRI_LANKA_DISTRICTS } from "@taskhub/shared";
 import { TaskCard } from "@/components/TaskCard";
 import { CategoryIcon } from "@/components/CategoryIcon";
+import { useCountry } from "@/lib/country";
 
 const CATEGORIES = Object.keys(CATEGORY_LABELS) as TaskCategory[];
 
@@ -22,16 +23,18 @@ export default function BrowseTasksPage() {
 function BrowseTasksInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { country } = useCountry();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState("");
   const category = (searchParams.get("category") as TaskCategory | null) ?? null;
+  const district = searchParams.get("district") ?? "";
 
   useEffect(() => {
     let active = true;
     setLoading(true);
     getClient()
-      .getTasks({ status: "open", category: category ?? undefined, query: query || undefined })
+      .getTasks({ status: "open", category: category ?? undefined, district: district || undefined, country, query: query || undefined })
       .then((result) => {
         if (active) setTasks(result);
       })
@@ -39,12 +42,19 @@ function BrowseTasksInner() {
     return () => {
       active = false;
     };
-  }, [category, query]);
+  }, [category, district, country, query]);
 
   const setCategory = (cat: TaskCategory | null) => {
     const params = new URLSearchParams(searchParams.toString());
     if (cat) params.set("category", cat);
     else params.delete("category");
+    router.push(`/tasks?${params.toString()}`);
+  };
+
+  const setDistrict = (d: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (d) params.set("district", d);
+    else params.delete("district");
     router.push(`/tasks?${params.toString()}`);
   };
 
@@ -55,16 +65,32 @@ function BrowseTasksInner() {
       <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-lg mb-2xl">
         <div>
           <h1 className="text-display-xl font-display text-ink">Browse tasks</h1>
-          <p className="text-body-md text-body mt-sm">{resultLabel} open across Colombo &amp; Kandy</p>
+          <p className="text-body-md text-body mt-sm">{resultLabel} open in {COUNTRY_LABELS[country]}</p>
         </div>
-        <div className="relative w-full lg:w-80">
-          <Search size={18} className="absolute left-lg top-1/2 -translate-y-1/2 text-mute" />
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search tasks…"
-            className="w-full bg-canvas-soft rounded-pill pl-[44px] pr-lg py-md text-body-md outline-none focus:ring-2 focus:ring-ink/20"
-          />
+        <div className="flex flex-col sm:flex-row gap-md w-full lg:w-auto">
+          <div className="relative w-full lg:w-80">
+            <Search size={18} className="absolute left-lg top-1/2 -translate-y-1/2 text-mute" />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search tasks…"
+              className="w-full bg-canvas-soft rounded-pill pl-[44px] pr-lg py-md text-body-md outline-none focus:ring-2 focus:ring-ink/20"
+            />
+          </div>
+          {country === "LK" && (
+            <select
+              value={district}
+              onChange={(e) => setDistrict(e.target.value)}
+              className="bg-canvas-soft rounded-pill px-lg py-md text-body-md outline-none focus:ring-2 focus:ring-ink/20"
+            >
+              <option value="">All districts</option>
+              {SRI_LANKA_DISTRICTS.map((d) => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
       </div>
 
@@ -72,7 +98,7 @@ function BrowseTasksInner() {
         <button
           onClick={() => setCategory(null)}
           className={`rounded-pill px-lg py-sm text-body-sm-strong whitespace-nowrap shrink-0 ${
-            !category ? "bg-primary-600 text-on-dark" : "bg-canvas-soft text-ink hover:bg-surface-pressed"
+            !category ? "bg-accent-500 text-on-dark" : "bg-canvas-soft text-ink hover:bg-surface-pressed"
           }`}
         >
           All categories
@@ -82,7 +108,7 @@ function BrowseTasksInner() {
             key={cat}
             onClick={() => setCategory(cat)}
             className={`inline-flex items-center gap-sm rounded-pill px-lg py-sm text-body-sm-strong whitespace-nowrap shrink-0 ${
-              category === cat ? "bg-primary-600 text-on-dark" : "bg-canvas-soft text-ink hover:bg-surface-pressed"
+              category === cat ? "bg-accent-500 text-on-dark" : "bg-canvas-soft text-ink hover:bg-surface-pressed"
             }`}
           >
             <CategoryIcon category={cat} size={15} />

@@ -1,29 +1,33 @@
 import { useState, useCallback } from "react";
-import { View, Text, TextInput, FlatList, StyleSheet, Pressable, ScrollView } from "react-native";
+import { View, Text, TextInput, FlatList, StyleSheet, Pressable, ScrollView, Modal } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
-import { Search } from "lucide-react-native";
+import { Search, ChevronDown, Check } from "lucide-react-native";
 import { getClient } from "@taskhub/data";
 import type { Task, TaskCategory } from "@taskhub/shared";
-import { CATEGORY_LABELS } from "@taskhub/shared";
+import { CATEGORY_LABELS, COUNTRY_LABELS, SRI_LANKA_DISTRICTS } from "@taskhub/shared";
 import { TaskListItem } from "../components/TaskListItem";
 import { CategoryIcon } from "../components/CategoryIcon";
+import { useCountry } from "../lib/country";
 import { colors, radius, shadow, spacing, type } from "../theme";
 
 const CATEGORIES = Object.keys(CATEGORY_LABELS) as TaskCategory[];
 
 export function TasksScreen({ navigation, route }: any) {
+  const { country } = useCountry();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<TaskCategory | null>(route?.params?.category ?? null);
+  const [district, setDistrict] = useState<string | null>(null);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(() => {
     setLoading(true);
     getClient()
-      .getTasks({ status: "open", category: category ?? undefined, query: query || undefined })
+      .getTasks({ status: "open", category: category ?? undefined, district: district ?? undefined, country, query: query || undefined })
       .then(setTasks)
       .finally(() => setLoading(false));
-  }, [category, query]);
+  }, [category, district, country, query]);
 
   useFocusEffect(
     useCallback(() => {
@@ -43,7 +47,7 @@ export function TasksScreen({ navigation, route }: any) {
         <View>
           <Text style={styles.heading}>Browse tasks</Text>
           <Text style={styles.subheading}>
-            {loading ? "Loading…" : `${tasks.length} task${tasks.length === 1 ? "" : "s"} open across Colombo & Kandy`}
+            {loading ? "Loading…" : `${tasks.length} task${tasks.length === 1 ? "" : "s"} open in ${COUNTRY_LABELS[country]}`}
           </Text>
 
           <View style={styles.searchRow}>
@@ -58,6 +62,45 @@ export function TasksScreen({ navigation, route }: any) {
               returnKeyType="search"
             />
           </View>
+
+          {country === "LK" && (
+            <Pressable onPress={() => setPickerOpen(true)} style={styles.districtRow}>
+              <Text style={styles.districtText}>{district ?? "All districts"}</Text>
+              <ChevronDown size={16} color={colors.body} />
+            </Pressable>
+          )}
+
+          <Modal visible={pickerOpen} transparent animationType="fade" onRequestClose={() => setPickerOpen(false)}>
+            <Pressable style={styles.modalBackdrop} onPress={() => setPickerOpen(false)}>
+              <View style={styles.modalSheet}>
+                <ScrollView>
+                  <Pressable
+                    style={styles.modalRow}
+                    onPress={() => {
+                      setDistrict(null);
+                      setPickerOpen(false);
+                    }}
+                  >
+                    <Text style={styles.modalRowText}>All districts</Text>
+                    {!district && <Check size={16} color={colors.primary} />}
+                  </Pressable>
+                  {SRI_LANKA_DISTRICTS.map((d) => (
+                    <Pressable
+                      key={d}
+                      style={styles.modalRow}
+                      onPress={() => {
+                        setDistrict(d);
+                        setPickerOpen(false);
+                      }}
+                    >
+                      <Text style={styles.modalRowText}>{d}</Text>
+                      {district === d && <Check size={16} color={colors.primary} />}
+                    </Pressable>
+                  ))}
+                </ScrollView>
+              </View>
+            </Pressable>
+          </Modal>
 
           <ScrollView
             horizontal
@@ -98,6 +141,22 @@ const styles = StyleSheet.create({
     marginTop: spacing.lg,
   },
   searchInput: { flex: 1, paddingVertical: spacing.md, color: colors.ink, ...type.bodyMd },
+  districtRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: colors.canvasSoft,
+    borderRadius: radius.pill,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    marginHorizontal: spacing.lg,
+    marginTop: spacing.sm,
+  },
+  districtText: { ...type.bodyMd, color: colors.ink },
+  modalBackdrop: { flex: 1, backgroundColor: "rgba(0,0,0,0.4)", justifyContent: "flex-end" },
+  modalSheet: { backgroundColor: colors.canvas, borderTopLeftRadius: radius.xl, borderTopRightRadius: radius.xl, maxHeight: "70%", paddingVertical: spacing.md },
+  modalRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingVertical: spacing.md, paddingHorizontal: spacing.lg },
+  modalRowText: { ...type.bodyMd, color: colors.ink },
   chipsRow: { marginTop: spacing.lg, paddingLeft: spacing.lg, marginBottom: spacing.lg },
   chip: {
     flexDirection: "row",
@@ -108,7 +167,7 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
     paddingHorizontal: spacing.lg,
   },
-  chipActive: { backgroundColor: colors.primary, ...shadow.level1 },
+  chipActive: { backgroundColor: colors.accent, ...shadow.level1 },
   chipText: { ...type.bodySmStrong, color: colors.ink },
   chipTextActive: { color: colors.onDark },
   list: { paddingHorizontal: spacing.lg, paddingBottom: spacing.xxxl },

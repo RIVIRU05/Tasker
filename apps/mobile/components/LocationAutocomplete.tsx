@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { View, Text, TextInput, Pressable, StyleSheet, ActivityIndicator } from "react-native";
 import { MapPin } from "lucide-react-native";
-import type { LocationSuggestion } from "@taskhub/shared";
+import type { CountryCode, LocationSuggestion } from "@taskhub/shared";
 import { searchLocations } from "../lib/geocode";
 import { colors, radius, shadow, spacing, type } from "../theme";
 
@@ -11,9 +11,10 @@ interface LocationAutocompleteProps {
   value: string;
   onChangeText: (text: string) => void;
   onSelect: (suggestion: LocationSuggestion) => void;
+  country?: CountryCode;
 }
 
-export function LocationAutocomplete({ label, placeholder, value, onChangeText, onSelect }: LocationAutocompleteProps) {
+export function LocationAutocomplete({ label, placeholder, value, onChangeText, onSelect, country }: LocationAutocompleteProps) {
   const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -30,7 +31,7 @@ export function LocationAutocomplete({ label, placeholder, value, onChangeText, 
     }
     setLoading(true);
     const handle = setTimeout(() => {
-      searchLocations(value)
+      searchLocations(value, country)
         .then((results) => {
           setSuggestions(results);
           setOpen(true);
@@ -38,7 +39,7 @@ export function LocationAutocomplete({ label, placeholder, value, onChangeText, 
         .finally(() => setLoading(false));
     }, 400);
     return () => clearTimeout(handle);
-  }, [value]);
+  }, [value, country]);
 
   function handleSelect(s: LocationSuggestion) {
     skipNextSearch.current = true;

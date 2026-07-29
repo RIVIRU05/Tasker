@@ -6,7 +6,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Home, Search, PlusCircle, User as UserIcon } from "lucide-react-native";
 import { SessionProvider } from "./lib/session";
+import { CountryProvider } from "./lib/country";
 import { AppHeaderLogo } from "./components/AppHeader";
+import { CountryToggle } from "./components/CountryToggle";
 import { HomeScreen } from "./screens/HomeScreen";
 import { TasksScreen } from "./screens/TasksScreen";
 import { PostTaskScreen } from "./screens/PostTaskScreen";
@@ -27,6 +29,7 @@ function MainTabs() {
       screenOptions={{
         headerShown: true,
         headerTitle: () => <AppHeaderLogo />,
+        headerRight: () => <CountryToggle />,
         headerStyle: { backgroundColor: colors.canvas },
         headerShadowVisible: false,
         tabBarActiveTintColor: colors.primary,
@@ -53,7 +56,11 @@ function MainTabs() {
       <Tab.Screen
         name="Post"
         component={PostTaskScreen}
-        options={{ tabBarIcon: ({ color, size }) => <PlusCircle color={color} size={size} />, title: "Post" }}
+        options={{
+          tabBarIcon: ({ color, size }) => <PlusCircle color={color} size={size} />,
+          title: "Post",
+          headerRight: () => null,
+        }}
       />
       <Tab.Screen
         name="Dashboard"
@@ -68,23 +75,25 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <SessionProvider>
-        <NavigationContainer>
-          <Stack.Navigator
-            screenOptions={{
-              headerStyle: { backgroundColor: colors.canvas },
-              headerTitleStyle: { ...type.bodyLg, color: colors.ink },
-              headerTintColor: colors.ink,
-              headerShadowVisible: false,
-            }}
-          >
-            <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
-            <Stack.Screen name="TaskDetail" component={TaskDetailScreen} options={{ title: "Task" }} />
-            <Stack.Screen name="WorkerProfile" component={WorkerProfileScreen} options={{ title: "Worker" }} />
-            <Stack.Screen name="Leaderboard" component={LeaderboardScreen} options={{ title: "Top workers" }} />
-            <Stack.Screen name="Login" component={LoginScreen} options={{ title: "Log in", presentation: "modal" }} />
-            <Stack.Screen name="Signup" component={SignupScreen} options={{ title: "Sign up", presentation: "modal" }} />
-          </Stack.Navigator>
-        </NavigationContainer>
+        <CountryProvider>
+          <NavigationContainer>
+            <Stack.Navigator
+              screenOptions={{
+                headerStyle: { backgroundColor: colors.canvas },
+                headerTitleStyle: { ...type.bodyLg, color: colors.ink },
+                headerTintColor: colors.ink,
+                headerShadowVisible: false,
+              }}
+            >
+              <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
+              <Stack.Screen name="TaskDetail" component={TaskDetailScreen} options={{ title: "Task" }} />
+              <Stack.Screen name="WorkerProfile" component={WorkerProfileScreen} options={{ title: "Worker" }} />
+              <Stack.Screen name="Leaderboard" component={LeaderboardScreen} options={{ title: "Top workers" }} />
+              <Stack.Screen name="Login" component={LoginScreen} options={{ title: "Log in", presentation: "modal" }} />
+              <Stack.Screen name="Signup" component={SignupScreen} options={{ title: "Sign up", presentation: "modal" }} />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </CountryProvider>
       </SessionProvider>
       <StatusBar style="dark" />
     </SafeAreaProvider>

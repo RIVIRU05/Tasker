@@ -9,21 +9,23 @@ import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
 import { CategoryIcon } from "../components/CategoryIcon";
 import { TaskListItem } from "../components/TaskListItem";
+import { useCountry } from "../lib/country";
 import { colors, radius, spacing, type } from "../theme";
 
 const CATEGORIES: TaskCategory[] = ["plumbing", "electrical", "painting", "moving", "cleaning", "carpentry", "welding", "gardening"];
 
 export function HomeScreen({ navigation }: any) {
+  const { country } = useCountry();
   const [tasks, setTasks] = useState<Task[] | null>(null);
   const [error, setError] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
       getClient()
-        .getTasks({ status: "open" })
+        .getTasks({ status: "open", country })
         .then(setTasks)
         .catch(() => setError(true));
-    }, [])
+    }, [country])
   );
 
   return (

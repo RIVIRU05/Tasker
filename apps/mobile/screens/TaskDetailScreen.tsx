@@ -4,7 +4,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { MapPin, Clock, AlertTriangle, ShieldCheck } from "lucide-react-native";
 import { getClient } from "@taskhub/data";
 import type { Bid, Task, User } from "@taskhub/shared";
-import { CATEGORY_LABELS, formatLKR } from "@taskhub/shared";
+import { CATEGORY_LABELS, formatMoney } from "@taskhub/shared";
 import { useSession } from "../lib/session";
 import { Card } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
@@ -165,9 +165,9 @@ export function TaskDetailScreen({ route, navigation }: any) {
       <Card variant="soft">
         <Text style={styles.mutedLabel}>Budget</Text>
         <Text style={styles.budget}>
-          {formatLKR(task.budgetMin)} – {formatLKR(task.budgetMax)}
+          {formatMoney(task.budgetMin, task.location.country)} – {formatMoney(task.budgetMax, task.location.country)}
         </Text>
-        {task.paymentAmount > 0 && <Text style={styles.body}>Agreed price: {formatLKR(task.paymentAmount)}</Text>}
+        {task.paymentAmount > 0 && <Text style={styles.body}>Agreed price: {formatMoney(task.paymentAmount, task.location.country)}</Text>}
       </Card>
 
       {customer && (
@@ -183,14 +183,21 @@ export function TaskDetailScreen({ route, navigation }: any) {
         </Card>
       )}
 
-      {/* Task action area */}
       <Card variant="elevated">
         {!user && <Button label="Log in to take action" onPress={() => navigation.navigate("Login")} />}
-        {user && isCustomer && task.status === "assigned" && <Text style={styles.body}>This task is already assigned.</Text>}
+        {user && isCustomer && task.status === "assigned" && task.paymentStatus === "pending" && (
+          <PayNowInline task={task} onPaid={load} />
+        )}
+        {user && isCustomer && task.status === "assigned" && task.paymentStatus !== "pending" && (
+          <Text style={styles.body}>This task is already assigned.</Text>
+        )}
         {user && isCustomer && task.status === "in_progress" && <Text style={styles.body}>Work is in progress.</Text>}
         {user && isCustomer && task.status === "open" && <Text style={styles.body}>Waiting for bids — accept one below.</Text>}
 
-        {user && user.id === task.workerId && task.status === "assigned" && (
+        {user && user.id === task.workerId && task.status === "assigned" && task.paymentStatus === "pending" && (
+          <Text style={styles.body}>Waiting for the customer to complete payment before you can start.</Text>
+        )}
+        {user && user.id === task.workerId && task.status === "assigned" && task.paymentStatus !== "pending" && (
           <Button label={busy ? "Starting…" : "Start job"} onPress={() => run(() => getClient().updateTask(task.id, { status: "in_progress" }))} loading={busy} />
         )}
 
@@ -244,7 +251,6 @@ export function TaskDetailScreen({ route, navigation }: any) {
         </View>
       </Card>
 
-      {/* Bids */}
       {task.status === "open" && (
         <View>
           <Text style={styles.sectionTitle}>
@@ -263,7 +269,7 @@ export function TaskDetailScreen({ route, navigation }: any) {
                       <StarRating value={bidder.workerProfile?.rating.avgStars ?? 0} reviewCount={bidder.workerProfile?.rating.totalReviews} />
                     </View>
                   </View>
-                  <Text style={styles.bidPrice}>{formatLKR(bid.offeredPrice)}</Text>
+                  <Text style={styles.bidPrice}>{formatMoney(bid.offeredPrice, task.location.country)}</Text>
                 </View>
                 {bidder.workerProfile && <BadgeRow badges={bidder.workerProfile.badges} />}
                 <Text style={[styles.body, { marginTop: spacing.sm }]}>{bid.message}</Text>
@@ -307,6 +313,58 @@ export function TaskDetailScreen({ route, navigation }: any) {
     </ScrollView>
   );
 }
+
+function PayNowInline({ task, onPaid }: { task: Task; onPaid: () => void }) {
+  const [processing, setProcessing] = useState(false);
+  const [card, setCard] = useState("");
+
+  async function handlePay() {
+    setProcessing(true);
+    await new Promise((resolve) => setTimeout(resolve, 1200));
+    await getClient().fundEscrow(task.id);
+    setProcessing(false);
+    onPaid();
+  }
+
+  return (
+    <View style={{ gap: spacing.md }}>
+      <View style={payStyles.headerRow}>
+        <Text style={payStyles.brand}>PH</Text>
+        <Text style={styles.personName}>Pay with PayHere</Text>
+      </View>
+      <Text style={styles.body}>Amount due: {formatMoney(task.paymentAmount, task.location.country)}</Text>
+      <Input
+        label="Card number"
+        placeholder="4111 1111 1111 1111"
+        value={card}
+        onChangeText={setCard}
+        keyboardType="number-pad"
+        maxLength={19}
+        hint="Demo checkout — any card number works, nothing is actually charged."
+      />
+      <Button label={processing ? "Processing…" : `Pay ${formatMoney(task.paymentAmount, task.location.country)}`} onPress={handlePay} loading={processing} />
+      <View style={payStyles.escrowRow}>
+        <ShieldCheck size={13} color={colors.mute} />
+        <Text style={styles.escrowText}>Held in escrow until you approve the finished work</Text>
+      </View>
+    </View>
+  );
+}
+
+const payStyles = StyleSheet.create({
+  headerRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
+  brand: {
+    width: 36,
+    height: 36,
+    borderRadius: radius.md,
+    backgroundColor: colors.primary,
+    color: colors.onDark,
+    textAlign: "center",
+    textAlignVertical: "center",
+    ...type.bodySmStrong,
+  },
+  escrowRow: { flexDirection: "row", alignItems: "center", gap: spacing.xs, justifyContent: "center" },
+});
 
 function DisputeAction({ task, currentUser, onChange }: { task: Task; currentUser: User; onChange: () => void }) {
   const [open, setOpen] = useState(false);

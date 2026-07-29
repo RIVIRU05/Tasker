@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { View, Text, ScrollView, StyleSheet, Pressable } from "react-native";
 import { getClient } from "@taskhub/data";
-import type { TaskCategory, TaskTimeline } from "@taskhub/shared";
-import { CATEGORY_LABELS } from "@taskhub/shared";
+import type { CountryCode, TaskCategory, TaskTimeline } from "@taskhub/shared";
+import { CATEGORY_LABELS, COUNTRY_CURRENCY, COUNTRY_LABELS } from "@taskhub/shared";
 import { useSession } from "../lib/session";
+import { useCountry } from "../lib/country";
 import { Card } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
 import { Input, Textarea } from "../components/ui/Input";
@@ -13,10 +14,13 @@ import { searchLocations } from "../lib/geocode";
 import { colors, radius, spacing, type } from "../theme";
 
 const CATEGORIES = Object.keys(CATEGORY_LABELS) as TaskCategory[];
+const COUNTRIES: CountryCode[] = ["LK", "AU"];
+const COUNTRY_FLAGS: Record<CountryCode, string> = { LK: "🇱🇰", AU: "🇦🇺" };
 const STEPS = ["Details", "Budget", "Review"];
 
 export function PostTaskScreen({ navigation }: any) {
   const { user, loading } = useSession();
+  const { country: browsingCountry } = useCountry();
   const [step, setStep] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState({
@@ -27,6 +31,8 @@ export function PostTaskScreen({ navigation }: any) {
     budgetMin: "",
     budgetMax: "",
     timeline: "flexible" as TaskTimeline,
+    district: undefined as string | undefined,
+    country: browsingCountry as CountryCode,
     lat: null as number | null,
     lng: null as number | null,
   });
@@ -50,12 +56,13 @@ export function PostTaskScreen({ navigation }: any) {
   async function handleSubmit() {
     if (!user) return;
     setSubmitting(true);
-    let { lat, lng } = form;
+    let { lat, lng, district } = form;
     if (lat == null || lng == null) {
-      const results = await searchLocations(form.city).catch(() => []);
+      const results = await searchLocations(form.city, form.country).catch(() => []);
       if (results[0]) {
         lat = results[0].lat;
         lng = results[0].lng;
+        district = results[0].district;
       }
     }
     const task = await getClient().createTask({
@@ -63,7 +70,14 @@ export function PostTaskScreen({ navigation }: any) {
       description: form.description,
       category: form.category,
       photos: [],
-      location: { address: form.city, city: form.city, lat: lat ?? 6.9271, lng: lng ?? 79.8612 },
+      location: {
+        address: form.city,
+        city: form.city,
+        district,
+        country: form.country,
+        lat: lat ?? (form.country === "AU" ? -33.8688 : 6.9271),
+        lng: lng ?? (form.country === "AU" ? 151.2093 : 79.8612),
+      },
       budgetMin: Number(form.budgetMin),
       budgetMax: Number(form.budgetMax),
       timeline: form.timeline,
@@ -71,7 +85,19 @@ export function PostTaskScreen({ navigation }: any) {
     });
     setSubmitting(false);
     setStep(0);
-    setForm({ title: "", description: "", category: "plumbing", city: "", budgetMin: "", budgetMax: "", timeline: "flexible", lat: null, lng: null });
+    setForm({
+      title: "",
+      description: "",
+      category: "plumbing",
+      city: "",
+      budgetMin: "",
+      budgetMax: "",
+      timeline: "flexible",
+      district: undefined,
+      country: browsingCountry,
+      lat: null,
+      lng: null,
+    });
     navigation.navigate("TaskDetail", { taskId: task.id });
   }
 
@@ -93,6 +119,20 @@ export function PostTaskScreen({ navigation }: any) {
       <Card variant="elevated" style={{ gap: spacing.lg }}>
         {step === 0 && (
           <>
+            <Text style={styles.label}>Country</Text>
+            <View style={styles.categoryGrid}>
+              {COUNTRIES.map((c) => (
+                <Pressable
+                  key={c}
+                  onPress={() => setForm((f) => ({ ...f, country: c, city: "", district: undefined, lat: null, lng: null }))}
+                  style={[styles.categoryOption, form.country === c && styles.categoryOptionActive]}
+                >
+                  <Text style={[styles.categoryText, form.country === c && { color: colors.onDark }]}>
+                    {COUNTRY_FLAGS[c]} {COUNTRY_LABELS[c]}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
             <Text style={styles.label}>Category</Text>
             <View style={styles.categoryGrid}>
               {CATEGORIES.map((cat) => (
@@ -111,17 +151,18 @@ export function PostTaskScreen({ navigation }: any) {
             <LocationAutocomplete
               label="City / area"
               value={form.city}
-              onChangeText={(city) => setForm((f) => ({ ...f, city, lat: null, lng: null }))}
-              onSelect={(s) => setForm((f) => ({ ...f, city: s.city, lat: s.lat, lng: s.lng }))}
-              placeholder="e.g. Nugegoda, Colombo"
+              country={form.country}
+              onChangeText={(city) => setForm((f) => ({ ...f, city, district: undefined, lat: null, lng: null }))}
+              onSelect={(s) => setForm((f) => ({ ...f, city: s.city, district: s.district, lat: s.lat, lng: s.lng }))}
+              placeholder={form.country === "AU" ? "e.g. Parramatta, Sydney" : "e.g. Nugegoda, Colombo"}
             />
           </>
         )}
 
         {step === 1 && (
           <>
-            <Input label="Budget min (LKR)" keyboardType="numeric" value={form.budgetMin} onChangeText={(v) => setForm((f) => ({ ...f, budgetMin: v }))} />
-            <Input label="Budget max (LKR)" keyboardType="numeric" value={form.budgetMax} onChangeText={(v) => setForm((f) => ({ ...f, budgetMax: v }))} />
+            <Input label={`Budget min (${COUNTRY_CURRENCY[form.country]})`} keyboardType="numeric" value={form.budgetMin} onChangeText={(v) => setForm((f) => ({ ...f, budgetMin: v }))} />
+            <Input label={`Budget max (${COUNTRY_CURRENCY[form.country]})`} keyboardType="numeric" value={form.budgetMax} onChangeText={(v) => setForm((f) => ({ ...f, budgetMax: v }))} />
             <Text style={styles.label}>Timeline</Text>
             <View style={styles.categoryGrid}>
               {(["urgent", "flexible", "scheduled"] as TaskTimeline[]).map((tl) => (
@@ -141,10 +182,10 @@ export function PostTaskScreen({ navigation }: any) {
           <>
             <Text style={styles.reviewTitle}>{form.title || "Untitled task"}</Text>
             <Text style={styles.body}>{form.description}</Text>
-            <Text style={styles.body}>Location: {form.city || "—"}</Text>
+            <Text style={styles.body}>Location: {form.city || "—"}, {COUNTRY_LABELS[form.country]}</Text>
             <Text style={styles.body}>Timeline: {form.timeline}</Text>
             <Text style={styles.body}>
-              Budget: LKR {form.budgetMin || 0} – {form.budgetMax || 0}
+              Budget: {COUNTRY_CURRENCY[form.country]} {form.budgetMin || 0} – {form.budgetMax || 0}
             </Text>
           </>
         )}
@@ -170,14 +211,14 @@ const styles = StyleSheet.create({
   stepsRow: { flexDirection: "row", justifyContent: "center", gap: spacing.xl, marginVertical: spacing.lg },
   stepItem: { alignItems: "center", gap: spacing.xxs },
   stepDot: { width: 28, height: 28, borderRadius: 14, backgroundColor: colors.canvasSoft, alignItems: "center", justifyContent: "center" },
-  stepDotActive: { backgroundColor: colors.primary },
+  stepDotActive: { backgroundColor: colors.accent },
   stepNum: { ...type.bodySmStrong, color: colors.mute },
   stepNumActive: { color: colors.onDark },
   stepLabel: { ...type.caption, color: colors.mute },
   label: { ...type.bodySmStrong, color: colors.ink },
   categoryGrid: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
   categoryOption: { flexDirection: "row", alignItems: "center", gap: spacing.xs, backgroundColor: colors.canvasSoft, borderRadius: radius.md, paddingVertical: spacing.sm, paddingHorizontal: spacing.md },
-  categoryOptionActive: { backgroundColor: colors.primary },
+  categoryOptionActive: { backgroundColor: colors.accent },
   categoryText: { ...type.bodySmStrong, color: colors.ink, textTransform: "capitalize" },
   reviewTitle: { ...type.displaySm, color: colors.ink },
   body: { ...type.bodyMd, color: colors.body },

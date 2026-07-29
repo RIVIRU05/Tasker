@@ -140,7 +140,7 @@ export default function HowItWorksPage() {
           <Star size={22} className="shrink-0" />
           <p className="text-body-md text-ink">
             Verify with a <strong>.ac.lk</strong> email for student pricing — a 10% discount as a
-            customer, or a reduced 15% commission as a worker.
+            customer, or a reduced 9% commission as a worker.
           </p>
         </Card>
       </section>

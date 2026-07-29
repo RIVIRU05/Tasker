@@ -1,7 +1,7 @@
 import { Pressable, View, Text, Image, StyleSheet } from "react-native";
 import { Clock } from "lucide-react-native";
 import type { Task } from "@taskhub/shared";
-import { CATEGORY_LABELS, formatLKR } from "@taskhub/shared";
+import { CATEGORY_LABELS, formatMoney } from "@taskhub/shared";
 import { CategoryIcon } from "./CategoryIcon";
 import { StatusPill } from "./ui/StatusPill";
 import { staticMapTileUrl } from "../lib/mapTile";
@@ -37,7 +37,7 @@ export function TaskListItem({ task, onPress }: { task: Task; onPress: () => voi
           </View>
         </View>
         <Text style={styles.price}>
-          {formatLKR(task.budgetMin)} – {formatLKR(task.budgetMax)}
+          {formatMoney(task.budgetMin, task.location.country)} – {formatMoney(task.budgetMax, task.location.country)}
         </Text>
       </View>
     </Pressable>

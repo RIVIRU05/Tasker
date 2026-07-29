@@ -14,6 +14,7 @@ import { BadgeRow } from "@/components/ui/Badge";
 import { Avatar } from "@/components/ui/Avatar";
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { TaskCard } from "@/components/TaskCard";
+import { useCountry } from "@/lib/country";
 
 const CATEGORIES: TaskCategory[] = [
   "plumbing",
@@ -27,20 +28,20 @@ const CATEGORIES: TaskCategory[] = [
 ];
 
 export default function HomePage() {
+  const { country } = useCountry();
   const [featuredTasks, setFeaturedTasks] = useState<Task[]>([]);
   const [leaderboard, setLeaderboard] = useState<User[]>([]);
 
   useEffect(() => {
     const client = getClient();
-    Promise.all([client.getTasks({ status: "open" }), client.getLeaderboard(4)]).then(([tasks, top]) => {
+    Promise.all([client.getTasks({ status: "open", country }), client.getLeaderboard(4)]).then(([tasks, top]) => {
       setFeaturedTasks(tasks.slice(0, 5));
       setLeaderboard(top);
     });
-  }, []);
+  }, [country]);
 
   return (
     <div>
-      {/* Hero */}
       <section className="bg-canvas">
         <div className="max-w-container mx-auto px-lg lg:px-3xl py-3xl lg:py-[64px] grid lg:grid-cols-2 gap-3xl items-center">
           <div>
@@ -72,7 +73,7 @@ export default function HomePage() {
             <h2 className="text-display-sm font-display text-ink">Post a task in 3 steps</h2>
             <div className="flex flex-col gap-sm mt-lg">
               <div className="flex items-center gap-md rounded-md bg-canvas-soft p-lg">
-                <span className="w-8 h-8 rounded-full bg-primary-600 text-on-dark flex items-center justify-center text-body-sm-strong shrink-0">
+                <span className="w-8 h-8 rounded-full bg-accent-500 text-on-dark flex items-center justify-center text-body-sm-strong shrink-0">
                   1
                 </span>
                 <div>
@@ -81,7 +82,7 @@ export default function HomePage() {
                 </div>
               </div>
               <div className="flex items-center gap-md rounded-md bg-canvas-soft p-lg">
-                <span className="w-8 h-8 rounded-full bg-primary-600 text-on-dark flex items-center justify-center text-body-sm-strong shrink-0">
+                <span className="w-8 h-8 rounded-full bg-accent-500 text-on-dark flex items-center justify-center text-body-sm-strong shrink-0">
                   2
                 </span>
                 <div>
@@ -90,7 +91,7 @@ export default function HomePage() {
                 </div>
               </div>
               <div className="flex items-center gap-md rounded-md bg-canvas-soft p-lg">
-                <span className="w-8 h-8 rounded-full bg-primary-600 text-on-dark flex items-center justify-center text-body-sm-strong shrink-0">
+                <span className="w-8 h-8 rounded-full bg-accent-500 text-on-dark flex items-center justify-center text-body-sm-strong shrink-0">
                   3
                 </span>
                 <div>
@@ -106,7 +107,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Category chips */}
       <section className="max-w-container mx-auto px-lg lg:px-3xl pb-3xl">
         <div className="flex items-center gap-md overflow-x-auto no-scrollbar pb-sm">
           {CATEGORIES.map((cat) => (
@@ -122,7 +122,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Feature band: two promo cards, customer vs worker */}
       <section className="max-w-container mx-auto px-lg lg:px-3xl pb-3xl">
         <div className="grid lg:grid-cols-2 gap-2xl">
           <Card variant="content" className="border border-black/[0.06]">
@@ -145,7 +144,7 @@ export default function HomePage() {
             <h3 className="text-display-md font-display text-ink">Skilled with tools?</h3>
             <p className="text-body-md text-body mt-sm">
               Browse open tasks near you, bid what you&apos;re worth, and get paid securely —
-              student workers keep more with a reduced 15% fee.
+              student workers keep more with a reduced 9% fee.
             </p>
             <Link href="/signup" className="inline-flex items-center gap-xs text-body-md-strong text-ink mt-lg">
               Start earning <ChevronRight size={16} />
@@ -154,7 +153,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Black promo band */}
       <section className="max-w-container mx-auto px-lg lg:px-3xl pb-3xl">
         <Card variant="on-dark" className="grid lg:grid-cols-2 gap-2xl items-center">
           <div>
@@ -191,7 +189,6 @@ export default function HomePage() {
         </Card>
       </section>
 
-      {/* Featured open tasks */}
       {featuredTasks.length > 0 && (
         <section className="max-w-container mx-auto px-lg lg:px-3xl pb-3xl">
           <div className="flex items-center justify-between mb-lg">
@@ -208,7 +205,6 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* Leaderboard teaser */}
       <section className="max-w-container mx-auto px-lg lg:px-3xl pb-3xl">
         <div className="flex items-center justify-between mb-lg">
           <h3 className="text-display-xl font-display text-ink">Top-rated workers</h3>
@@ -239,21 +235,20 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Business band / FAQ intro */}
       <section className="max-w-container mx-auto px-lg lg:px-3xl pb-3xl">
         <Card variant="soft">
           <div className="grid lg:grid-cols-3 gap-2xl">
             <div>
-              <h4 className="text-display-sm font-display text-ink">20% platform fee</h4>
+              <h4 className="text-display-sm font-display text-ink">12% platform fee</h4>
               <p className="text-body-sm text-body mt-sm">
-                15% for verified student workers. No listing fees, no subscriptions — Tasker
+                9% for verified student workers. No listing fees, no subscriptions — Tasker
                 only earns when you do.
               </p>
             </div>
             <div>
               <h4 className="text-display-sm font-display text-ink">Student discounts</h4>
               <p className="text-body-sm text-body mt-sm">
-                Verify with a .ac.lk email for a 10% discount as a customer, or a reduced 15%
+                Verify with a .ac.lk email for a 10% discount as a customer, or a reduced 9%
                 commission as a worker.
               </p>
             </div>
