@@ -314,6 +314,17 @@ export function TaskDetailScreen({ route, navigation }: any) {
   );
 }
 
+function PayPalMark({ size = 36 }: { size?: number }) {
+  return (
+    <View style={[payStyles.mark, { width: size, height: size, borderRadius: radius.md }]}>
+      <View style={payStyles.markLetters}>
+        <Text style={[payStyles.markP, { color: "#003087", fontSize: size * 0.46 }]}>P</Text>
+        <Text style={[payStyles.markP, { color: "#009cde", fontSize: size * 0.46, marginLeft: -size * 0.12 }]}>P</Text>
+      </View>
+    </View>
+  );
+}
+
 function PayNowInline({ task, onPaid }: { task: Task; onPaid: () => void }) {
   const [processing, setProcessing] = useState(false);
   const [card, setCard] = useState("");
@@ -329,8 +340,8 @@ function PayNowInline({ task, onPaid }: { task: Task; onPaid: () => void }) {
   return (
     <View style={{ gap: spacing.md }}>
       <View style={payStyles.headerRow}>
-        <Text style={payStyles.brand}>PH</Text>
-        <Text style={styles.personName}>Pay with PayHere</Text>
+        <PayPalMark />
+        <Text style={styles.personName}>Pay with PayPal</Text>
       </View>
       <Text style={styles.body}>Amount due: {formatMoney(task.paymentAmount, task.location.country)}</Text>
       <Input
@@ -353,16 +364,15 @@ function PayNowInline({ task, onPaid }: { task: Task; onPaid: () => void }) {
 
 const payStyles = StyleSheet.create({
   headerRow: { flexDirection: "row", alignItems: "center", gap: spacing.sm },
-  brand: {
-    width: 36,
-    height: 36,
-    borderRadius: radius.md,
-    backgroundColor: colors.primary,
-    color: colors.onDark,
-    textAlign: "center",
-    textAlignVertical: "center",
-    ...type.bodySmStrong,
+  mark: {
+    backgroundColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: "rgba(0,0,0,0.08)",
+    alignItems: "center",
+    justifyContent: "center",
   },
+  markLetters: { flexDirection: "row" },
+  markP: { fontWeight: "800", fontStyle: "italic" },
   escrowRow: { flexDirection: "row", alignItems: "center", gap: spacing.xs, justifyContent: "center" },
 });
 

@@ -11,6 +11,21 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 
+function PayPalMark({ size = 40 }: { size?: number }) {
+  return (
+    <span
+      className="rounded-md bg-white border border-black/[0.08] flex items-center justify-center shrink-0"
+      style={{ width: size, height: size }}
+      aria-hidden="true"
+    >
+      <span style={{ fontFamily: "Arial, Helvetica, sans-serif", fontSize: size * 0.46, lineHeight: 1 }} className="flex">
+        <span style={{ color: "#003087", fontWeight: 800, fontStyle: "italic" }}>P</span>
+        <span style={{ color: "#009cde", fontWeight: 800, fontStyle: "italic", marginLeft: -size * 0.12 }}>P</span>
+      </span>
+    </span>
+  );
+}
+
 export default function PaymentPage() {
   const params = useParams<{ id: string }>();
   const [task, setTask] = useState<Task | null>(null);
@@ -88,11 +103,9 @@ export default function PaymentPage() {
               </div>
 
               <div className="py-lg flex items-center gap-md">
-                <span className="w-10 h-10 rounded-md bg-primary-600 text-on-dark flex items-center justify-center text-body-sm-strong">
-                  PH
-                </span>
+                <PayPalMark />
                 <div>
-                  <p className="text-body-md-strong text-ink">Paid via PayHere</p>
+                  <p className="text-body-md-strong text-ink">Paid via PayPal</p>
                   <p className="text-body-sm text-mute">Demo transaction, no real charge</p>
                 </div>
               </div>
@@ -151,10 +164,8 @@ function PayNowCard({ task, onPaid }: { task: Task; onPaid: () => void }) {
 
       <form onSubmit={handlePay} className="flex flex-col gap-lg py-lg">
         <div className="flex items-center gap-sm">
-          <span className="w-10 h-10 rounded-md bg-primary-600 text-on-dark flex items-center justify-center text-body-sm-strong shrink-0">
-            PH
-          </span>
-          <p className="text-body-md-strong text-ink">Pay with PayHere</p>
+          <PayPalMark />
+          <p className="text-body-md-strong text-ink">Pay with PayPal</p>
         </div>
         <Input
           id="card"

@@ -256,7 +256,7 @@ export default function HomePage() {
               <h4 className="text-display-sm font-display text-ink">Made for Australia</h4>
               <p className="text-body-sm text-body mt-sm">
                 Built around Sydney and Melbourne suburbs, AUD pricing, and local payment methods
-                like PayHere and bank transfer.
+                like PayPal and bank transfer.
               </p>
             </div>
           </div>
