@@ -445,14 +445,24 @@ export class FirebaseTaskHubClient implements TaskHubClient {
     await updateDoc(disputeRef, patch);
 
     const paymentStatus = input.resolution === "refund" ? "refunded" : "released";
-    await updateDoc(doc(db, "tasks", dispute.taskId), { status: "completed", paymentStatus, updatedAt: nowIso() });
+    const workerAmount = input.amountPaidToWorker ?? 0;
+    await updateDoc(doc(db, "tasks", dispute.taskId), {
+      status: "completed",
+      paymentStatus,
+      workerAmount,
+      updatedAt: nowIso(),
+    });
 
     const txnSnap = await getDocs(query(this.col("transactions"), where("taskId", "==", dispute.taskId)));
     const txnDoc = txnSnap.docs[0];
     if (txnDoc) {
       await updateDoc(
         txnDoc.ref,
-        stripUndefined({ status: paymentStatus, releasedAt: paymentStatus === "released" ? nowIso() : undefined })
+        stripUndefined({
+          status: paymentStatus,
+          workerAmount,
+          releasedAt: paymentStatus === "released" ? nowIso() : undefined,
+        })
       );
     }
 

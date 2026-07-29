@@ -422,13 +422,15 @@ export class MockTaskHubClient implements TaskHubClient {
     const taskIdx = s.tasks.findIndex((t) => t.id === dispute.taskId);
     const txnIdx = s.transactions.findIndex((t) => t.taskId === dispute.taskId);
     const paymentStatus = input.resolution === "refund" ? "refunded" : "released";
+    const workerAmount = input.amountPaidToWorker ?? 0;
     if (taskIdx !== -1) {
-      s.tasks[taskIdx] = { ...s.tasks[taskIdx], status: "completed", paymentStatus, updatedAt: nowIso() };
+      s.tasks[taskIdx] = { ...s.tasks[taskIdx], status: "completed", paymentStatus, workerAmount, updatedAt: nowIso() };
     }
     if (txnIdx !== -1) {
       s.transactions[txnIdx] = {
         ...s.transactions[txnIdx],
         status: paymentStatus,
+        workerAmount,
         releasedAt: paymentStatus === "released" ? nowIso() : s.transactions[txnIdx].releasedAt,
       };
     }
