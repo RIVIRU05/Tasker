@@ -3,7 +3,7 @@ import { View, Text, ScrollView, Pressable, StyleSheet } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
 import { getClient } from "@taskhub/data";
 import type { Bid, Task } from "@taskhub/shared";
-import { CATEGORY_LABELS, formatLKR } from "@taskhub/shared";
+import { CATEGORY_LABELS, formatMoney } from "@taskhub/shared";
 import { useSession } from "../lib/session";
 import { Button } from "../components/ui/Button";
 import { Card } from "../components/ui/Card";
@@ -82,7 +82,8 @@ export function DashboardScreen({ navigation }: any) {
               {task.title}
             </Text>
             <Text style={styles.metaText}>
-              {CATEGORY_LABELS[task.category]} · {formatLKR(task.budgetMin)}–{formatLKR(task.budgetMax)}
+              {CATEGORY_LABELS[task.category]} · {formatMoney(task.budgetMin, task.location.country)}–
+              {formatMoney(task.budgetMax, task.location.country)}
             </Text>
           </View>
           <StatusPill status={task.status} />
@@ -94,7 +95,7 @@ export function DashboardScreen({ navigation }: any) {
           <Card variant="onDark" style={styles.earningsCard}>
             <View>
               <Text style={styles.earningsLabel}>Total earnings</Text>
-              <Text style={styles.earningsValue}>{formatLKR(totalEarnings)}</Text>
+              <Text style={styles.earningsValue}>{formatMoney(totalEarnings, "AU")}</Text>
             </View>
             <View style={{ alignItems: "flex-end" }}>
               <Text style={styles.earningsLabel}>Jobs completed</Text>
@@ -117,7 +118,7 @@ export function DashboardScreen({ navigation }: any) {
                 <Text style={styles.rowTitle} numberOfLines={1}>
                   {task.title}
                 </Text>
-                <Text style={styles.metaText}>{formatLKR(task.paymentAmount)} agreed</Text>
+                <Text style={styles.metaText}>{formatMoney(task.paymentAmount, task.location.country)} agreed</Text>
               </View>
               <StatusPill status={task.status} />
             </Pressable>
@@ -135,7 +136,7 @@ export function DashboardScreen({ navigation }: any) {
                 <Text style={styles.rowTitle} numberOfLines={1}>
                   {bid.task?.title ?? "Task"}
                 </Text>
-                <Text style={styles.metaText}>Your bid: {formatLKR(bid.offeredPrice)}</Text>
+                <Text style={styles.metaText}>Your bid: {formatMoney(bid.offeredPrice, bid.task?.location.country)}</Text>
               </View>
               <Text style={[styles.bidStatus, bid.status === "accepted" && { color: colors.success }, bid.status === "rejected" && { color: colors.danger }]}>
                 {bid.status}

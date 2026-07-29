@@ -31,7 +31,7 @@ export function HomeScreen({ navigation }: any) {
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
       <Text style={styles.heading}>Get it done by trusted local pros</Text>
-      <Text style={styles.subheading}>Post a task, get bids from verified workers across Colombo and Kandy.</Text>
+      <Text style={styles.subheading}>Post a task, get bids from verified workers across Sydney and Melbourne.</Text>
 
       <View style={styles.ctaRow}>
         <Button

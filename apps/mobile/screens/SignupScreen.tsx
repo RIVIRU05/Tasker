@@ -17,7 +17,7 @@ const TYPE_OPTIONS: { value: UserType; label: string }[] = [
 
 export function SignupScreen({ navigation }: any) {
   const { refresh } = useSession();
-  const [form, setForm] = useState({ name: "", email: "", phone: "", location: "Colombo", password: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", location: "Sydney", password: "" });
   const [userType, setUserType] = useState<UserType>("customer");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -64,14 +64,14 @@ export function SignupScreen({ navigation }: any) {
           value={form.email}
           onChangeText={(v) => setForm((f) => ({ ...f, email: v }))}
           placeholder="you@example.com"
-          hint="Use a .ac.lk email to unlock student pricing"
+          hint="Use an .edu.au email to unlock student pricing"
         />
         <Input
           label="Phone"
           keyboardType="phone-pad"
           value={form.phone}
           onChangeText={(v) => setForm((f) => ({ ...f, phone: v }))}
-          placeholder="+94 77 123 4567"
+          placeholder="+61 412 345 678"
         />
         <Input label="Location" value={form.location} onChangeText={(v) => setForm((f) => ({ ...f, location: v }))} />
         <Input

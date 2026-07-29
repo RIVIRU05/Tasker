@@ -4,7 +4,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { MapPin, Clock, AlertTriangle, ShieldCheck } from "lucide-react-native";
 import { getClient } from "@taskhub/data";
 import type { Bid, Task, User } from "@taskhub/shared";
-import { CATEGORY_LABELS, formatMoney } from "@taskhub/shared";
+import { CATEGORY_LABELS, COUNTRY_CURRENCY, formatMoney } from "@taskhub/shared";
 import { useSession } from "../lib/session";
 import { Card } from "../components/ui/Card";
 import { Button } from "../components/ui/Button";
@@ -287,7 +287,12 @@ export function TaskDetailScreen({ route, navigation }: any) {
         <Card variant="soft">
           <Text style={styles.sectionTitle}>Submit a bid</Text>
           <View style={{ gap: spacing.md, marginTop: spacing.sm }}>
-            <Input label="Your price (LKR)" keyboardType="numeric" value={bidPrice} onChangeText={setBidPrice} />
+            <Input
+              label={`Your price (${COUNTRY_CURRENCY[task.location.country ?? "AU"]})`}
+              keyboardType="numeric"
+              value={bidPrice}
+              onChangeText={setBidPrice}
+            />
             <Textarea label="Message" value={bidMessage} onChangeText={setBidMessage} placeholder="Explain your approach…" />
             <Button label={submittingBid ? "Submitting…" : "Submit bid"} onPress={handleSubmitBid} loading={submittingBid} />
           </View>

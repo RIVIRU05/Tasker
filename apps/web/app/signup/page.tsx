@@ -91,13 +91,13 @@ export default function SignupPage() {
               placeholder="you@example.com"
               value={form.email}
               onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-              hint={isStudentEmail ? "Student email detected, you'll get student pricing automatically." : "Use a .edu.au email to unlock student pricing."}
+              hint={isStudentEmail ? "Student email detected, you'll get student pricing automatically." : "Use an .edu.au email to unlock student pricing."}
             />
             <Input
               id="phone"
               label="Phone"
               required
-              placeholder="+94 77 123 4567"
+              placeholder="+61 412 345 678"
               value={form.phone}
               onChange={(e) => setForm((f) => ({ ...f, phone: e.target.value }))}
             />

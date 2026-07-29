@@ -248,7 +248,7 @@ export default function HomePage() {
             <div>
               <h4 className="text-display-sm font-display text-ink">Student discounts</h4>
               <p className="text-body-sm text-body mt-sm">
-                Verify with a .edu.au email for a 10% discount as a customer, or a reduced 9%
+                Verify with an .edu.au email for a 10% discount as a customer, or a reduced 9%
                 commission as a worker.
               </p>
             </div>
