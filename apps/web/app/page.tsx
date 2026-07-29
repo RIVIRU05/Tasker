@@ -50,7 +50,7 @@ export default function HomePage() {
             </h1>
             <p className="text-body-lg text-body mt-lg max-w-md">
               Post any task, from plumbing and electrical to painting and moving, and get bids
-              from verified workers in Colombo and Kandy within minutes.
+              from verified workers in Sydney and Melbourne within minutes.
             </p>
             <div className="flex flex-wrap items-center gap-md mt-2xl">
               <Button href="/tasks/new" variant="primary" size="lg">
@@ -248,15 +248,15 @@ export default function HomePage() {
             <div>
               <h4 className="text-display-sm font-display text-ink">Student discounts</h4>
               <p className="text-body-sm text-body mt-sm">
-                Verify with a .ac.lk email for a 10% discount as a customer, or a reduced 9%
+                Verify with a .edu.au email for a 10% discount as a customer, or a reduced 9%
                 commission as a worker.
               </p>
             </div>
             <div>
-              <h4 className="text-display-sm font-display text-ink">Made for Sri Lanka</h4>
+              <h4 className="text-display-sm font-display text-ink">Made for Australia</h4>
               <p className="text-body-sm text-body mt-sm">
-                Built around Colombo and Kandy suburbs, LKR pricing, and local payment methods
-                like Koko Pay and mobile money.
+                Built around Sydney and Melbourne suburbs, AUD pricing, and local payment methods
+                like PayHere and bank transfer.
               </p>
             </div>
           </div>

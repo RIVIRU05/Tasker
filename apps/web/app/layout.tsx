@@ -19,9 +19,9 @@ const interText = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Tasker: Find trusted local workers in Sri Lanka",
+  title: "Tasker: Find trusted local workers in Australia",
   description:
-    "Post a task and get bids from verified plumbers, electricians, painters, movers and more across Colombo and Kandy.",
+    "Post a task and get bids from verified plumbers, electricians, painters, movers and more across Sydney and Melbourne.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

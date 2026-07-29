@@ -26,8 +26,8 @@ export default function ContactPage() {
               </span>
               <div>
                 <p className="text-body-md-strong text-ink">Email</p>
-                <a href="mailto:hello@tasker.lk" className="text-body-sm text-body">
-                  hello@tasker.lk
+                <a href="mailto:hello@tasker.com.au" className="text-body-sm text-body">
+                  hello@tasker.com.au
                 </a>
               </div>
             </div>
@@ -37,7 +37,7 @@ export default function ContactPage() {
               </span>
               <div>
                 <p className="text-body-md-strong text-ink">Phone</p>
-                <p className="text-body-sm text-body">+94 11 234 5678</p>
+                <p className="text-body-sm text-body">+61 2 8123 4567</p>
               </div>
             </div>
             <div className="flex items-center gap-md">
@@ -46,7 +46,7 @@ export default function ContactPage() {
               </span>
               <div>
                 <p className="text-body-md-strong text-ink">Office</p>
-                <p className="text-body-sm text-body">14 Duplication Road, Colombo 04, Sri Lanka</p>
+                <p className="text-body-sm text-body">14 George Street, Sydney NSW 2000, Australia</p>
               </div>
             </div>
           </div>

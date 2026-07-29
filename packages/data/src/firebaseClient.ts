@@ -113,7 +113,7 @@ export class FirebaseTaskHubClient implements TaskHubClient {
       createUserWithEmailAndPassword(auth, input.email, input.password)
     );
     const uid = credential.user.uid;
-    const isStudent = Boolean(input.email.match(/\.ac\.lk$/i));
+    const isStudent = Boolean(input.email.match(/\.(ac\.lk|edu\.au)$/i));
     const isWorker = input.userType === "worker" || input.userType === "both";
 
     const user: User = {

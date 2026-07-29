@@ -110,7 +110,7 @@ export class MockTaskHubClient implements TaskHubClient {
       persist();
       return existing;
     }
-    const isStudent = Boolean(input.email.match(/\.ac\.lk$/i));
+    const isStudent = Boolean(input.email.match(/\.(ac\.lk|edu\.au)$/i));
     const user: User = {
       id: uid("user"),
       email: input.email,

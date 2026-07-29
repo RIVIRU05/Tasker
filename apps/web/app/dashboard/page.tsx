@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { getClient } from "@taskhub/data";
 import type { Bid, Task } from "@taskhub/shared";
-import { CATEGORY_LABELS, formatLKR } from "@taskhub/shared";
+import { CATEGORY_LABELS, formatMoney } from "@taskhub/shared";
 import { useSession } from "@/lib/session";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -96,7 +96,8 @@ export default function DashboardPage() {
                 <div className="min-w-0">
                   <p className="text-body-md-strong text-ink truncate">{task.title}</p>
                   <p className="text-body-sm text-body mt-xs">
-                    {CATEGORY_LABELS[task.category]} · {formatLKR(task.budgetMin)}–{formatLKR(task.budgetMax)}
+                    {CATEGORY_LABELS[task.category]} · {formatMoney(task.budgetMin, task.location.country)}–
+                    {formatMoney(task.budgetMax, task.location.country)}
                   </p>
                 </div>
                 <StatusPill status={task.status} />
@@ -112,7 +113,7 @@ export default function DashboardPage() {
             <Card variant="on-dark" className="flex items-center justify-between flex-wrap gap-lg">
               <div>
                 <p className="text-body-sm text-white/70">Total earnings</p>
-                <p className="text-display-lg font-display text-on-dark mt-xs">{formatLKR(totalEarnings)}</p>
+                <p className="text-display-lg font-display text-on-dark mt-xs">{formatMoney(totalEarnings, "AU")}</p>
               </div>
               <div className="text-right">
                 <p className="text-body-sm text-white/70">Jobs completed</p>
@@ -144,7 +145,9 @@ export default function DashboardPage() {
                       <CategoryIcon category={task.category} size={18} className="text-mute shrink-0" />
                       <div className="min-w-0">
                         <p className="text-body-md-strong text-ink truncate">{task.title}</p>
-                        <p className="text-body-sm text-body mt-xs">{formatLKR(task.paymentAmount)} agreed</p>
+                        <p className="text-body-sm text-body mt-xs">
+                          {formatMoney(task.paymentAmount, task.location.country)} agreed
+                        </p>
                       </div>
                     </div>
                     <StatusPill status={task.status} />
@@ -173,7 +176,9 @@ export default function DashboardPage() {
                   >
                     <div className="min-w-0">
                       <p className="text-body-md-strong text-ink truncate">{bid.task?.title ?? "Task"}</p>
-                      <p className="text-body-sm text-body mt-xs">Your bid: {formatLKR(bid.offeredPrice)}</p>
+                      <p className="text-body-sm text-body mt-xs">
+                        Your bid: {formatMoney(bid.offeredPrice, bid.task?.location.country)}
+                      </p>
                     </div>
                     <span
                       className={`text-body-sm-strong px-lg py-sm rounded-pill ${

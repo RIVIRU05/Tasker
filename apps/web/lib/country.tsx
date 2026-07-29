@@ -13,7 +13,7 @@ interface CountryContextValue {
 const CountryContext = createContext<CountryContextValue | null>(null);
 
 export function CountryProvider({ children }: { children: ReactNode }) {
-  const [country, setCountryState] = useState<CountryCode>("LK");
+  const [country, setCountryState] = useState<CountryCode>("AU");
 
   useEffect(() => {
     const stored = window.localStorage.getItem(STORAGE_KEY);

@@ -7,7 +7,7 @@ import Link from "next/link";
 import { MapPin, Clock, AlertTriangle, ShieldCheck } from "lucide-react";
 import { getClient } from "@taskhub/data";
 import type { Bid, CountryCode, Task, User } from "@taskhub/shared";
-import { CATEGORY_LABELS, formatMoney } from "@taskhub/shared";
+import { CATEGORY_LABELS, COUNTRY_CURRENCY, formatMoney } from "@taskhub/shared";
 import { useSession } from "@/lib/session";
 import { isAdmin } from "@/lib/admin";
 import { Card } from "@/components/ui/Card";
@@ -210,7 +210,9 @@ export default function TaskDetailPage() {
             </div>
           )}
 
-          {canBid && <BidForm taskId={task.id} workerId={user!.id} onSubmitted={load} />}
+          {canBid && (
+            <BidForm taskId={task.id} workerId={user!.id} country={task.location.country} onSubmitted={load} />
+          )}
 
           {task.workerId && customer && worker && user && (user.id === task.customerId || user.id === task.workerId) && (
             <div>
@@ -313,7 +315,17 @@ function BidRow({
   );
 }
 
-function BidForm({ taskId, workerId, onSubmitted }: { taskId: string; workerId: string; onSubmitted: () => void }) {
+function BidForm({
+  taskId,
+  workerId,
+  country,
+  onSubmitted,
+}: {
+  taskId: string;
+  workerId: string;
+  country?: CountryCode;
+  onSubmitted: () => void;
+}) {
   const [price, setPrice] = useState("");
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -335,7 +347,7 @@ function BidForm({ taskId, workerId, onSubmitted }: { taskId: string; workerId: 
         <Input
           id="price"
           type="number"
-          label="Your price (LKR)"
+          label={`Your price (${COUNTRY_CURRENCY[country ?? "AU"]})`}
           required
           min={1}
           value={price}

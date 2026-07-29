@@ -6,16 +6,16 @@ export default function AboutPage() {
       <div className="max-w-2xl">
         <h1 className="text-display-xl font-display text-ink">About Tasker</h1>
         <p className="text-body-lg text-body mt-lg">
-          Tasker connects Sri Lankan homeowners and businesses with skilled local workers:
-          plumbers, electricians, painters, movers, welders and more. We started in Colombo with
+          Tasker connects Australian homeowners and businesses with skilled local workers:
+          plumbers, electricians, painters, movers, welders and more. We started in Sydney with
           one goal: make it as easy to book a trusted plumber as it is to book a ride.
         </p>
       </div>
 
       <div className="grid sm:grid-cols-3 gap-2xl mt-3xl">
         <Card variant="soft">
-          <p className="text-display-md font-display text-ink">21M</p>
-          <p className="text-body-sm text-body mt-xs">People across Sri Lanka in our addressable market</p>
+          <p className="text-display-md font-display text-ink">26M</p>
+          <p className="text-body-sm text-body mt-xs">People across Australia in our addressable market</p>
         </Card>
         <Card variant="soft">
           <p className="text-display-md font-display text-ink">1,200+</p>
@@ -45,9 +45,9 @@ export default function AboutPage() {
             </p>
           </div>
           <div>
-            <h3 className="text-body-lg font-text font-medium text-ink">Built for Sri Lanka</h3>
+            <h3 className="text-body-lg font-text font-medium text-ink">Built for Australia</h3>
             <p className="text-body-md text-body mt-xs">
-              LKR pricing, local payment methods, and a dispute process designed around how work
+              AUD pricing, local payment methods, and a dispute process designed around how work
               actually gets done here, not adapted from a foreign playbook.
             </p>
           </div>
@@ -55,8 +55,11 @@ export default function AboutPage() {
       </div>
 
       <div className="mt-3xl max-w-2xl text-body-sm text-mute border-t border-black/[0.06] pt-2xl">
-        <p>Tasker (Private) Limited &middot; Business Registration No. PV 00123456</p>
-        <p className="mt-xs">Registered office: 14 Duplication Road, Colombo 04, Sri Lanka</p>
+        <p>Tasker Pty Ltd &middot; ABN 12 345 678 901</p>
+        <p className="mt-xs">Registered office: 14 George Street, Sydney NSW 2000, Australia</p>
+        <p className="mt-xs italic text-caption">
+          This website is for a class assignment project and not for commercial purpose.
+        </p>
       </div>
     </div>
   );

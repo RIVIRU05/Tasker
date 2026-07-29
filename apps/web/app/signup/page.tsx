@@ -20,12 +20,12 @@ const TYPE_OPTIONS: { value: UserType; label: string; desc: string }[] = [
 export default function SignupPage() {
   const router = useRouter();
   const { refresh } = useSession();
-  const [form, setForm] = useState({ name: "", email: "", phone: "", location: "Colombo", password: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", location: "Sydney", password: "" });
   const [userType, setUserType] = useState<UserType>("customer");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const isStudentEmail = /\.ac\.lk$/i.test(form.email.trim());
+  const isStudentEmail = /\.(ac\.lk|edu\.au)$/i.test(form.email.trim());
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -91,7 +91,7 @@ export default function SignupPage() {
               placeholder="you@example.com"
               value={form.email}
               onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))}
-              hint={isStudentEmail ? "Student email detected, you'll get student pricing automatically." : "Use a .ac.lk email to unlock student pricing."}
+              hint={isStudentEmail ? "Student email detected, you'll get student pricing automatically." : "Use a .edu.au email to unlock student pricing."}
             />
             <Input
               id="phone"

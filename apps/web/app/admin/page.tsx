@@ -5,7 +5,7 @@ import Link from "next/link";
 import { ShieldAlert } from "lucide-react";
 import { getClient } from "@taskhub/data";
 import type { Dispute, Task, Transaction, User } from "@taskhub/shared";
-import { formatLKR } from "@taskhub/shared";
+import { formatMoney } from "@taskhub/shared";
 import { useSession } from "@/lib/session";
 import { isAdmin } from "@/lib/admin";
 import { Card } from "@/components/ui/Card";
@@ -167,16 +167,21 @@ function DisputeCard({ row, onResolved }: { row: EnrichedDispute; onResolved: ()
 
       {transaction && (
         <p className="text-body-sm text-body mb-lg">
-          Escrow amount: <span className="text-ink font-text font-medium">{formatLKR(transaction.amount)}</span>{" "}
-          (worker would receive {formatLKR(transaction.workerAmount)})
+          Escrow amount:{" "}
+          <span className="text-ink font-text font-medium">
+            {formatMoney(transaction.amount, task?.location.country)}
+          </span>{" "}
+          (worker would receive {formatMoney(transaction.workerAmount, task?.location.country)})
         </p>
       )}
 
       {dispute.status === "resolved" ? (
         <p className="text-body-sm-strong text-success">
           Resolved: {dispute.resolution?.replace("_", " ")}
-          {dispute.amountRefunded ? ` · refunded ${formatLKR(dispute.amountRefunded)}` : ""}
-          {dispute.amountPaidToWorker ? ` · paid worker ${formatLKR(dispute.amountPaidToWorker)}` : ""}
+          {dispute.amountRefunded ? ` · refunded ${formatMoney(dispute.amountRefunded, task?.location.country)}` : ""}
+          {dispute.amountPaidToWorker
+            ? ` · paid worker ${formatMoney(dispute.amountPaidToWorker, task?.location.country)}`
+            : ""}
         </p>
       ) : (
         <div className="flex flex-wrap gap-sm">

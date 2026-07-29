@@ -139,7 +139,7 @@ export default function HowItWorksPage() {
         <Card variant="soft" className="flex items-center gap-lg">
           <Star size={22} className="shrink-0" />
           <p className="text-body-md text-ink">
-            Verify with a <strong>.ac.lk</strong> email for student pricing: a 10% discount as a
+            Verify with a <strong>.edu.au</strong> email for student pricing: a 10% discount as a
             customer, or a reduced 9% commission as a worker.
           </p>
         </Card>

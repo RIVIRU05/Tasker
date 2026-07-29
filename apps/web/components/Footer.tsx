@@ -41,7 +41,7 @@ export function Footer() {
               <span className="text-display-sm font-display text-on-dark">Tasker</span>
             </div>
             <p className="text-body-sm text-white/60 mt-lg max-w-xs">
-              Sri Lanka&apos;s marketplace for trusted local workers: plumbers, electricians,
+              Australia&apos;s marketplace for trusted local workers: plumbers, electricians,
               painters, movers and more. Post a task, get bids, get it done.
             </p>
             <div className="flex items-center gap-md mt-xl">
@@ -75,13 +75,13 @@ export function Footer() {
 
         <div className="mt-3xl pt-2xl border-t border-white/10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-lg">
           <div className="text-caption text-white/50 space-y-xs">
-            <p>Tasker (Pvt) Ltd &middot; Business Reg. No. PV 00123456 &middot; Colombo, Sri Lanka</p>
+            <p>Tasker Pty Ltd &middot; ABN 12 345 678 901 &middot; Sydney, Australia</p>
             <p>
               Contact:{" "}
-              <a href="mailto:hello@tasker.lk" className="underline">
-                hello@tasker.lk
+              <a href="mailto:hello@tasker.com.au" className="underline">
+                hello@tasker.com.au
               </a>{" "}
-              &middot; +94 11 234 5678
+              &middot; +61 2 8123 4567
             </p>
             <p className="max-w-2xl">
               Tasker is a marketplace platform connecting customers with independent workers.
@@ -94,6 +94,9 @@ export function Footer() {
                 OpenStreetMap
               </a>{" "}
               contributors
+            </p>
+            <p className="italic">
+              This website is for a class assignment project and not for commercial purpose.
             </p>
           </div>
           <p className="text-caption text-white/50 whitespace-nowrap">© 2026 Tasker. All rights reserved.</p>
